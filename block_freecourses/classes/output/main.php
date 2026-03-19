@@ -59,7 +59,6 @@ class main implements renderable, templatable {
      *
      * A free course here means:
      * - visible course
-     * - no course availability restrictions
      * - enabled self-enrol instance
      * - no enrolment key and no group key
      * - no cohort/date/capacity barriers
@@ -68,33 +67,28 @@ class main implements renderable, templatable {
      * @return array<int, array<string, mixed>>
      */
     private function get_free_courses(): array {
-        global $CFG, $DB;
+        global $CFG;
 
         require_once($CFG->libdir . '/enrollib.php');
+
+        if (!enrol_is_enabled('self')) {
+            return [];
+        }
 
         $selfplugin = enrol_get_plugin('self');
         if (!$selfplugin) {
             return [];
         }
 
-        $sql = "SELECT c.id, c.fullname, c.visible, c.availability
-                  FROM {course} c
-                 WHERE c.id <> :siteid
-                   AND c.visible = :visible
-              ORDER BY c.sortorder ASC";
-        $params = [
-            'siteid' => SITEID,
-            'visible' => 1,
-        ];
-
-        $courses = $DB->get_records_sql($sql, $params);
+        // Use core API that already applies the standard course visibility checks.
+        $courses = get_courses('all', 'c.sortorder ASC', 'c.id, c.fullname, c.visible');
         if (!$courses) {
             return [];
         }
 
         $cards = [];
         foreach ($courses as $course) {
-            if (!$this->is_course_without_additional_barriers($course)) {
+            if ((int)$course->id === SITEID || (int)$course->visible !== 1) {
                 continue;
             }
 
@@ -116,16 +110,6 @@ class main implements renderable, templatable {
         }
 
         return $cards;
-    }
-
-    /**
-     * Return true only when the course has no access restrictions configured.
-     *
-     * @param stdClass $course
-     * @return bool
-     */
-    private function is_course_without_additional_barriers(stdClass $course): bool {
-        return empty($course->availability);
     }
 
     /**
