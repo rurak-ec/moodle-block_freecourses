@@ -45,7 +45,7 @@ class main implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        $courses = $this->get_free_courses();
+        $courses = $this->get_free_courses($output);
 
         return [
             'uniqid' => uniqid(),
@@ -64,9 +64,10 @@ class main implements renderable, templatable {
      * - no cohort/date/capacity barriers
      * - currently self-enrollable according to Moodle self enrol plugin rules
      *
+     * @param renderer_base $output
      * @return array<int, array<string, mixed>>
      */
-    private function get_free_courses(): array {
+    private function get_free_courses(renderer_base $output): array {
         global $CFG;
 
         require_once($CFG->libdir . '/enrollib.php');
@@ -80,8 +81,8 @@ class main implements renderable, templatable {
             return [];
         }
 
-        // Use core API that already applies the standard course visibility checks.
-        $courses = get_courses('all', 'c.sortorder ASC', 'c.id, c.fullname, c.visible');
+        // Use core API that already applies standard Moodle course visibility checks.
+        $courses = get_courses('all', 'c.sortorder ASC', 'c.id, c.fullname, c.shortname, c.category, c.visible');
         if (!$courses) {
             return [];
         }
@@ -98,18 +99,50 @@ class main implements renderable, templatable {
 
             $context = \context_course::instance($course->id);
             $fullname = format_string($course->fullname, true, ['context' => $context]);
+            $coursecategory = $this->get_course_category_name((int)$course->category);
+            $courseimage = \core_course\external\course_summary_exporter::get_course_image($course);
+            if (!$courseimage) {
+                $courseimage = $output->get_generated_image_for_id($course->id);
+            }
+
             $cards[] = [
+                'id' => (int)$course->id,
+                'uniqid' => uniqid(),
                 'fullname' => $fullname,
-                'searchname' => core_text::strtolower($fullname),
+                'viewurl' => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(false),
                 'enrolurl' => (new moodle_url('/enrol/index.php', [
                     'id' => $course->id,
                     'action' => 'enrol',
                     'sesskey' => sesskey(),
                 ]))->out(false),
+                'courseimage' => $courseimage,
+                'coursecategory' => $coursecategory,
+                'showcoursecategory' => !empty($coursecategory),
+                'visible' => true,
+                'searchtext' => core_text::strtolower(trim($fullname . ' ' . $coursecategory)),
             ];
         }
 
         return $cards;
+    }
+
+    /**
+     * Get formatted course category name.
+     *
+     * @param int $categoryid
+     * @return string
+     */
+    private function get_course_category_name(int $categoryid): string {
+        if (empty($categoryid)) {
+            return '';
+        }
+
+        try {
+            $category = \core_course_category::get($categoryid, MUST_EXIST, true);
+            return format_string($category->name, true, ['context' => $category->get_context()]);
+        } catch (\Throwable $e) {
+            return '';
+        }
     }
 
     /**
