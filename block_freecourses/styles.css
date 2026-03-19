@@ -1,6 +1,6 @@
 .block.block_freecourses .freecourses-carddeck {
     display: grid !important;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
     gap: 0.5rem;
 }
 
@@ -27,5 +27,11 @@
 @media (min-width: 992px) {
     .block.block_freecourses .freecourses-carddeck {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1200px) {
+    .block.block_freecourses .freecourses-carddeck {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
