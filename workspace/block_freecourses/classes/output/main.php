@@ -59,7 +59,6 @@ class main implements renderable, templatable {
      *
      * A free course here means:
      * - visible course
-     * - no course availability restrictions
      * - enabled self-enrol instance
      * - no enrolment key and no group key
      * - no cohort/date/capacity barriers
@@ -77,7 +76,7 @@ class main implements renderable, templatable {
             return [];
         }
 
-        $sql = "SELECT c.id, c.fullname, c.visible, c.availability
+        $sql = "SELECT c.id, c.fullname, c.visible
                   FROM {course} c
                  WHERE c.id <> :siteid
                    AND c.visible = :visible
@@ -94,10 +93,6 @@ class main implements renderable, templatable {
 
         $cards = [];
         foreach ($courses as $course) {
-            if (!$this->is_course_without_additional_barriers($course)) {
-                continue;
-            }
-
             if (!$this->get_open_self_enrol_instance($course, $selfplugin)) {
                 continue;
             }
@@ -116,16 +111,6 @@ class main implements renderable, templatable {
         }
 
         return $cards;
-    }
-
-    /**
-     * Return true only when the course has no access restrictions configured.
-     *
-     * @param stdClass $course
-     * @return bool
-     */
-    private function is_course_without_additional_barriers(stdClass $course): bool {
-        return empty($course->availability);
     }
 
     /**
