@@ -26,7 +26,6 @@ namespace block_freecourses\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_text;
 use moodle_url;
 use renderable;
 use renderer_base;
@@ -119,7 +118,6 @@ class main implements renderable, templatable {
                 'coursecategory' => $coursecategory,
                 'showcoursecategory' => !empty($coursecategory),
                 'visible' => true,
-                'searchtext' => core_text::strtolower(trim($fullname . ' ' . $coursecategory)),
             ];
         }
 

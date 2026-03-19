@@ -21,15 +21,9 @@
 }}
 
 <div id="block-freecourses-{{uniqid}}" class="block_freecourses" data-region="freecourses">
-    <div role="search" class="mb-3" aria-label="{{#str}}searchcourses, block_freecourses{{/str}}">
-        {{< core/search_input_auto }}
-            {{$label}}{{#str}}searchcourses, block_freecourses{{/str}}{{/label}}
-            {{$placeholder}}{{#str}}searchcourses, block_freecourses{{/str}}{{/placeholder}}
-        {{/ core/search_input_auto }}
-    </div>
-
     {{#hascourses}}
         {{< core_course/coursecards }}
+            {{$classes}}freecourses-carddeck{{/classes}}
             {{$coursename}}
                 <span class="multiline" title="{{fullname}}">
                     <span class="visually-hidden">{{{fullname}}}</span>
@@ -52,10 +46,6 @@
                 </div>
             {{/progress}}
         {{/ core_course/coursecards }}
-
-        <div class="alert alert-info mt-2 d-none" data-region="search-empty" role="status">
-            {{#str}}nosearchresults, block_freecourses{{/str}}
-        </div>
     {{/hascourses}}
 
     {{^hascourses}}
@@ -64,42 +54,3 @@
         </div>
     {{/hascourses}}
 </div>
-
-{{#js}}
-(function() {
-    const root = document.getElementById('block-freecourses-{{uniqid}}');
-    if (!root) {
-        return;
-    }
-
-    const input = root.querySelector('[data-action="search"]');
-    const cards = Array.from(root.querySelectorAll('[data-region="card-deck"] > .col'));
-    const empty = root.querySelector('[data-region="search-empty"]');
-
-    if (!input || !cards.length || !empty) {
-        return;
-    }
-
-    const normalize = (value) => (value || '').toString().toLowerCase().trim();
-
-    const updateSearch = () => {
-        const query = normalize(input.value);
-        let visible = 0;
-
-        cards.forEach((card) => {
-            const courseName = normalize(card.querySelector('.coursename')?.textContent);
-            const category = normalize(card.querySelector('.badge')?.textContent);
-            const searchtext = (courseName + ' ' + category).trim();
-            const show = query === '' || searchtext.indexOf(query) !== -1;
-            card.classList.toggle('d-none', !show);
-            if (show) {
-                visible++;
-            }
-        });
-
-        empty.classList.toggle('d-none', visible !== 0);
-    };
-
-    input.addEventListener('input', updateSearch);
-})();
-{{/js}}
