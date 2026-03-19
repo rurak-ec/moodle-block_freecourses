@@ -1,58 +1,34 @@
-# Mapa técnico del plugin block_myoverview
+# Mapa técnico del plugin `block_freecourses`
 
-Directorio de desarrollo: `workspace/myoverview`
+Directorio de desarrollo recomendado: `workspace/block_freecourses`
+
+## Objetivo
+
+Bloque mínimo que lista cursos de libre acceso con autoinscripción `self` abierta y sin barreras:
+- búsqueda
+- tarjetas
+- botón **Inscribirse al Curso**
 
 ## Archivos principales
 
 | Archivo | Descripción |
 |---------|-------------|
-| `version.php` | Versión del plugin y componente (`block_myoverview`, v2025100600, Moodle 5.1+) |
-| `block_myoverview.php` | Clase principal del bloque (`block_myoverview extends block_base`) |
-| `lib.php` | Funciones de librería, constantes (agrupación, orden, vista, paginación), preferencias de usuario |
-| `settings.php` | Página de configuración del administrador |
-| `styles.css` | Estilos CSS del bloque |
+| `version.php` | Versión del plugin y componente (`block_freecourses`) |
+| `block_freecourses.php` | Clase principal del bloque |
+| `classes/output/main.php` | Filtrado de cursos libres + datos para template |
+| `classes/output/renderer.php` | Renderer del plugin |
+| `templates/main.mustache` | UI final del bloque |
+| `db/access.php` | Capability `block/freecourses:myaddinstance` |
+| `lang/es/block_freecourses.php` | Strings en español |
+| `lang/en/block_freecourses.php` | Strings en inglés |
 
-## Clases PHP (namespace `block_myoverview\`)
+## Estructura actual
 
-| Clase | Archivo | Descripción |
-|-------|---------|-------------|
-| `output\main` | `classes/output/main.php` | Clase renderable/templatable - lógica de renderizado |
-| `output\renderer` | `classes/output/renderer.php` | Renderer del plugin |
-| `privacy\provider` | `classes/privacy/provider.php` | Implementación de Privacy API |
+- `block_freecourses/`: plugin listo
+- `workspace/block_freecourses/`: copia de workspace
+- `docs/`: documentación
+- `scripts/`: utilidades
 
-## Módulos AMD JavaScript (`amd/src/`)
+## Notas
 
-| Módulo | Descripción |
-|--------|-------------|
-| `main.js` | Punto de entrada; inicializa ViewNav y View |
-| `view.js` | Renderizado de cursos (tarjetas, lista, resumen) |
-| `view_nav.js` | Controles de navegación/filtrado |
-| `repository.js` | Llamadas AJAX a servicios web de Moodle |
-| `selectors.js` | Constantes de selectores DOM |
-
-Los archivos compilados están en `amd/build/` (`.min.js` + `.min.js.map`).
-
-## Templates Mustache (`templates/`)
-
-14 plantillas: main, zero-state, courses-view, view-cards, view-list, view-summary, nav-grouping-selector, nav-sort-selector, nav-display-selector, nav-search-widget, course-action-menu, progress-bar, placeholders, placeholder-course-list-item.
-
-## Base de datos (`db/`)
-
-| Archivo | Descripción |
-|---------|-------------|
-| `access.php` | Capability: `block/myoverview:myaddinstance` |
-| `upgrade.php` | Pasos de actualización de BD |
-
-## Tests
-
-| Archivo | Tipo |
-|---------|------|
-| `tests/myoverview_test.php` | PHPUnit |
-| `tests/privacy/provider_test.php` | PHPUnit (Privacy) |
-| `tests/behat/*.feature` (10 archivos) | Behat BDD |
-
-## Reglas de diseño
-
-- No modificar `reference/myoverview`; usarlo solo como línea base de comparación.
-- Implementar todos los cambios en `workspace/myoverview`.
-- El nombre interno del componente es `block_myoverview` pero la carpeta de instalación es `myoverview` (dentro de `blocks/` de Moodle).
+No se usa la arquitectura antigua de `myoverview` (filtros, ordenamiento, cambio de vista, progreso, AMD heredado).

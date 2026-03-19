@@ -6,31 +6,31 @@ ERRORS=0
 
 echo "Isolation check for: ${ROOT_DIR}"
 
-for dir in workspace scripts docs; do
+for dir in workspace scripts docs block_freecourses; do
   if [[ ! -d "${ROOT_DIR}/${dir}" ]]; then
     echo "ERROR: missing directory ${ROOT_DIR}/${dir}" >&2
     ERRORS=$((ERRORS + 1))
   fi
 done
 
-if [[ -d "${ROOT_DIR}/workspace/myoverview" ]]; then
-  echo "OK: workspace/myoverview found"
+if [[ -d "${ROOT_DIR}/workspace/block_freecourses" ]]; then
+  echo "OK: workspace/block_freecourses found"
 else
-  echo "ERROR: workspace/myoverview not found" >&2
+  echo "ERROR: workspace/block_freecourses not found" >&2
   ERRORS=$((ERRORS + 1))
 fi
 
-if [[ -f "${ROOT_DIR}/workspace/myoverview/version.php" ]]; then
+if [[ -f "${ROOT_DIR}/workspace/block_freecourses/version.php" ]]; then
   echo "OK: version.php present"
 else
   echo "ERROR: version.php missing" >&2
   ERRORS=$((ERRORS + 1))
 fi
 
-if [[ -f "${ROOT_DIR}/workspace/myoverview/block_myoverview.php" ]]; then
-  echo "OK: block_myoverview.php (main block class) present"
+if [[ -f "${ROOT_DIR}/workspace/block_freecourses/block_freecourses.php" ]]; then
+  echo "OK: block_freecourses.php present"
 else
-  echo "ERROR: block_myoverview.php missing" >&2
+  echo "ERROR: block_freecourses.php missing" >&2
   ERRORS=$((ERRORS + 1))
 fi
 

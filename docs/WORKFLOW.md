@@ -1,72 +1,45 @@
-# Flujo de desarrollo
+# Flujo de desarrollo (`block_freecourses`)
 
 ## 1) Validar estructura del workspace
 
 ```bash
-cd /opt/moodle-dev/moodle-block_myoverview
+cd /opt/moodle-dev/moodle-free_courses
 ./scripts/verify_isolation.sh
 ```
 
 ## 2) Editar el plugin
 
-Trabajar en: `workspace/myoverview`
+Trabajar en: `workspace/block_freecourses`
 
-Archivos editados frecuentemente:
-- `workspace/myoverview/block_myoverview.php` — clase principal del bloque
-- `workspace/myoverview/lib.php` — funciones de librería y constantes
-- `workspace/myoverview/classes/output/main.php` — lógica de renderizado
-- `workspace/myoverview/settings.php` — configuración del admin
-- `workspace/myoverview/version.php` — versión del plugin (actualizar en cada release)
-- `workspace/myoverview/amd/src/*.js` — módulos JavaScript
+Archivos clave:
+- `workspace/block_freecourses/block_freecourses.php` — clase principal
+- `workspace/block_freecourses/classes/output/main.php` — lógica de cursos libres
+- `workspace/block_freecourses/templates/main.mustache` — búsqueda + tarjetas + botón
+- `workspace/block_freecourses/db/access.php` — capability
+- `workspace/block_freecourses/version.php` — versión/componente
 
-### Desarrollo con symlink (recomendado)
-
-Para desarrollo activo contra una instancia de Moodle, crear un symlink en vez de copiar:
-
-```bash
-ln -s /opt/moodle-dev/moodle-block_myoverview/workspace/myoverview {MOODLE_ROOT}/blocks/myoverview
-```
-
-Esto permite ver los cambios en tiempo real sin necesidad de empaquetar.
-
-### Recompilar JavaScript AMD
-
-Si se modifican archivos en `amd/src/`, regenerar los builds:
-
-```bash
-cd {MOODLE_ROOT}
-npx grunt amd --root=blocks/myoverview
-```
-
-## 3) Empaquetar ZIP para instalación
+## 3) Empaquetar ZIP
 
 ```bash
 ./scripts/package_workspace.sh
 ```
 
-Salida: `build/myoverview_YYYYMMDD_HHMMSS.zip`
+Salida: `build/block_freecourses_YYYYMMDD_HHMMSS.zip`
 
 ## 4) Instalar/probar en Moodle
 
-Extraer el ZIP en el directorio `blocks/` de Moodle:
+Extraer ZIP en `blocks/`, ejecutar upgrade y purge caches.
 
-```bash
-unzip build/myoverview_*.zip -d {MOODLE_ROOT}/blocks/
-```
-
-Luego ejecutar:
-
-```bash
-php admin/cli/upgrade.php --non-interactive
-php admin/cli/purge_caches.php
-```
-
-Verificar en: Administración del sitio > Plugins > Bloques.
+Validar en Dashboard:
+- solo cursos `self` abiertos sin barreras
+- búsqueda funcionando
+- tarjetas fijas
+- botón **Inscribirse al Curso**
 
 ## 5) Publicar cambios
 
 ```bash
 git add .
-git commit -m "feat: descripción de los cambios"
+git commit -m "feat: ..."
 git push
 ```

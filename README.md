@@ -1,59 +1,54 @@
-# moodle-block_myoverview
+# moodle-free_courses
 
-Workspace de desarrollo para el plugin de bloque de Moodle **`block_myoverview`** (Course overview / My overview).
+Repositorio de desarrollo para el bloque de Moodle **`block_freecourses`**.
+
+## Objetivo funcional
+
+El bloque muestra únicamente cursos de libre acceso con autoinscripción `self` abierta, sin clave ni barreras adicionales, en una UI mínima:
+- barra de búsqueda
+- tarjetas fijas
+- botón **Inscribirse al Curso**
 
 ## Estado del proyecto
 
 | Campo | Valor |
 |-------|-------|
-| Componente técnico | `block_myoverview` |
-| Directorio fuente | `workspace/myoverview` |
-| Moodle requerido | 5.1+ (2025092600) |
-| Versión del plugin | 2025100600 |
+| Componente técnico | `block_freecourses` |
+| Directorio plugin (raíz) | `block_freecourses/` |
+| Directorio plugin (workspace) | `workspace/block_freecourses/` |
+| Moodle requerido | 5.1+ (`2025092600`) |
+| Versión del plugin | `2026031901` |
 
 ## Estructura del repositorio
 
 ```
-moodle-block_myoverview/
-├── workspace/myoverview/   # Código fuente del plugin (desarrollo activo)
-├── scripts/                # Utilidades de empaquetado y verificación
-├── docs/                   # Documentación técnica
-├── build/                  # ZIPs generados (no es código fuente)
-└── reference/              # Copia original sin modificar (gitignored)
+moodle-free_courses/
+├── block_freecourses/          # Plugin listo para empaquetar/instalar
+├── workspace/block_freecourses/# Copia de trabajo en workspace
+├── scripts/                    # Utilidades de empaquetado y verificación
+├── docs/                       # Documentación técnica
+└── build/                      # ZIPs generados
 ```
 
 ## Quick start
 
 ```bash
+cd /opt/moodle-dev/moodle-free_courses
+
 # Validar workspace
 ./scripts/verify_isolation.sh
-
-# Editar el código fuente en workspace/myoverview/
 
 # Empaquetar ZIP instalable
 ./scripts/package_workspace.sh
 ```
 
-## Instalación en Moodle
-
-### Opción A: Desde ZIP
+## Instalación en Moodle (ZIP)
 
 1. Ejecutar `./scripts/package_workspace.sh`
-2. Extraer `build/myoverview_*.zip` en `{MOODLE_ROOT}/blocks/`
-3. Ejecutar:
-   ```bash
-   php admin/cli/upgrade.php --non-interactive
-   php admin/cli/purge_caches.php
-   ```
-
-### Opción B: Symlink (desarrollo)
-
-```bash
-ln -s /opt/moodle-dev/moodle-block_myoverview/workspace/myoverview {MOODLE_ROOT}/blocks/myoverview
-php admin/cli/purge_caches.php
-```
+2. Extraer el ZIP generado en el directorio `blocks/` de Moodle
+3. Ejecutar upgrade/purge cache en Moodle
 
 ## Documentación
 
-- [PLUGIN_MAP.md](docs/PLUGIN_MAP.md) — Mapa técnico del plugin
+- [PLUGIN_MAP.md](docs/PLUGIN_MAP.md) — Mapa técnico
 - [WORKFLOW.md](docs/WORKFLOW.md) — Flujo de desarrollo
