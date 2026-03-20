@@ -24,8 +24,9 @@
 
 $string['pluginname'] = 'Cursos Gratuitos';
 $string['freecourses:myaddinstance'] = 'Add a new Cursos Gratuitos block to Dashboard';
-$string['searchcourses'] = 'Search courses';
+$string['allcategories'] = 'All categories';
+$string['filterbycategory'] = 'Filter by category';
+$string['aria:categorydropdown'] = 'Category filter dropdown';
 $string['enrolcourse'] = 'Enroll in course';
 $string['nofreecourses'] = 'No free courses are currently available.';
-$string['nosearchresults'] = 'No courses were found for that search.';
 $string['privacy:metadata'] = 'The block_freecourses plugin does not store any personal data.';

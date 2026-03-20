@@ -19,6 +19,22 @@
     margin-bottom: 0.75rem;
 }
 
+.block.block_freecourses .freecourses-filterbar {
+    margin-bottom: 0.5rem !important;
+}
+
+.block.block_freecourses .freecourses-filterbar .dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+}
+
+.block.block_freecourses .freecourses-filterbar [data-active-item-text] {
+    max-width: 18rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .block.block_freecourses .freecourses-carddeck {
     --freecourses-gap: 0.5rem;
     --freecourses-cols: 1;
@@ -75,5 +91,20 @@
 @media (min-width: 1200px) {
     .block.block_freecourses .freecourses-carddeck {
         --freecourses-cols: 4;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .block.block_freecourses .freecourses-filterbar .dropdown {
+        width: 100%;
+    }
+
+    .block.block_freecourses .freecourses-filterbar .dropdown-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .block.block_freecourses .freecourses-filterbar [data-active-item-text] {
+        max-width: calc(100vw - 10rem);
     }
 }

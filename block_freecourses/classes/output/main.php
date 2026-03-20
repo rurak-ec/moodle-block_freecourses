@@ -36,6 +36,8 @@ use templatable;
  * Main block renderable.
  */
 class main implements renderable, templatable {
+    /** @var string category filter query parameter name */
+    private const CATEGORYPARAM = 'freecoursescategory';
 
     /**
      * Export template context.
@@ -44,12 +46,19 @@ class main implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        $courses = $this->get_free_courses($output);
+        $selectedcategoryid = optional_param(self::CATEGORYPARAM, 0, PARAM_INT);
+        $coursecontext = $this->get_free_courses($output, $selectedcategoryid);
 
         return [
             'uniqid' => uniqid(),
-            'hascourses' => !empty($courses),
-            'courses' => $courses,
+            'hascourses' => !empty($coursecontext['courses']),
+            'courses' => $coursecontext['courses'],
+            'showcategoryfilter' => !empty($coursecontext['categoryoptions']),
+            'selectedcategoryname' => $coursecontext['selectedcategoryname'],
+            'allcategoriesurl' => $this->build_category_filter_url(0)->out(false),
+            'allcategoriesactive' => empty($coursecontext['selectedcategoryid']),
+            'hascategoryoptions' => !empty($coursecontext['categoryoptions']),
+            'categoryoptions' => $coursecontext['categoryoptions'],
         ];
     }
 
@@ -64,29 +73,31 @@ class main implements renderable, templatable {
      * - currently self-enrollable according to Moodle self enrol plugin rules
      *
      * @param renderer_base $output
-     * @return array<int, array<string, mixed>>
+     * @param int $selectedcategoryid
+     * @return array<string, mixed>
      */
-    private function get_free_courses(renderer_base $output): array {
+    private function get_free_courses(renderer_base $output, int $selectedcategoryid): array {
         global $CFG;
 
         require_once($CFG->libdir . '/enrollib.php');
 
         if (!enrol_is_enabled('self')) {
-            return [];
+            return $this->get_empty_course_context();
         }
 
         $selfplugin = enrol_get_plugin('self');
         if (!$selfplugin) {
-            return [];
+            return $this->get_empty_course_context();
         }
 
         // Use core API that already applies standard Moodle course visibility checks.
         $courses = get_courses('all', 'c.sortorder ASC', 'c.id, c.fullname, c.shortname, c.category, c.visible');
         if (!$courses) {
-            return [];
+            return $this->get_empty_course_context();
         }
 
         $cards = [];
+        $categories = [];
         foreach ($courses as $course) {
             if ((int)$course->id === SITEID || (int)$course->visible !== 1) {
                 continue;
@@ -98,16 +109,22 @@ class main implements renderable, templatable {
 
             $context = \context_course::instance($course->id);
             $fullname = format_string($course->fullname, true, ['context' => $context]);
-            $coursecategory = $this->get_course_category_name((int)$course->category);
+            $categoryid = (int)$course->category;
+            $coursecategory = $this->get_course_category_name($categoryid);
             $courseimage = \core_course\external\course_summary_exporter::get_course_image($course);
             if (!$courseimage) {
                 $courseimage = $output->get_generated_image_for_id($course->id);
+            }
+
+            if (!empty($coursecategory) && !array_key_exists($categoryid, $categories)) {
+                $categories[$categoryid] = $coursecategory;
             }
 
             $cards[] = [
                 'id' => (int)$course->id,
                 'uniqid' => uniqid(),
                 'fullname' => $fullname,
+                'categoryid' => $categoryid,
                 'viewurl' => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(false),
                 'enrolurl' => (new moodle_url('/enrol/index.php', [
                     'id' => $course->id,
@@ -121,7 +138,67 @@ class main implements renderable, templatable {
             ];
         }
 
-        return $cards;
+        \core_collator::asort($categories, \core_collator::SORT_NATURAL);
+
+        if (!array_key_exists($selectedcategoryid, $categories)) {
+            $selectedcategoryid = 0;
+        }
+
+        if (!empty($selectedcategoryid)) {
+            $cards = array_values(array_filter($cards, static function(array $course) use ($selectedcategoryid): bool {
+                return (int)$course['categoryid'] === $selectedcategoryid;
+            }));
+        }
+
+        $categoryoptions = [];
+        foreach ($categories as $categoryid => $categoryname) {
+            $categoryoptions[] = [
+                'id' => (int)$categoryid,
+                'name' => $categoryname,
+                'url' => $this->build_category_filter_url((int)$categoryid)->out(false),
+                'active' => ((int)$categoryid === $selectedcategoryid),
+            ];
+        }
+
+        return [
+            'courses' => $cards,
+            'categoryoptions' => $categoryoptions,
+            'selectedcategoryid' => $selectedcategoryid,
+            'selectedcategoryname' => $selectedcategoryid
+                ? $categories[$selectedcategoryid]
+                : get_string('allcategories', 'block_freecourses'),
+        ];
+    }
+
+    /**
+     * Return empty template context for courses and filters.
+     *
+     * @return array<string, mixed>
+     */
+    private function get_empty_course_context(): array {
+        return [
+            'courses' => [],
+            'categoryoptions' => [],
+            'selectedcategoryid' => 0,
+            'selectedcategoryname' => get_string('allcategories', 'block_freecourses'),
+        ];
+    }
+
+    /**
+     * Build filter URL preserving current page params.
+     *
+     * @param int $categoryid
+     * @return moodle_url
+     */
+    private function build_category_filter_url(int $categoryid): moodle_url {
+        global $PAGE;
+
+        $url = new moodle_url($PAGE->url);
+        $url->remove_params(self::CATEGORYPARAM);
+        if ($categoryid > 0) {
+            $url->param(self::CATEGORYPARAM, $categoryid);
+        }
+        return $url;
     }
 
     /**

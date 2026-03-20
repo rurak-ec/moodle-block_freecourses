@@ -21,6 +21,36 @@
 }}
 
 <div id="block-freecourses-{{uniqid}}" class="block_freecourses" data-region="freecourses">
+    {{#showcategoryfilter}}
+        <div role="search" class="freecourses-filterbar d-flex justify-content-end align-items-center mb-2" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
+            <div class="dropdown mb-1">
+                <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
+                    <span class="d-flex align-items-center me-2">{{#pix}}i/filter, core{{/pix}}</span>
+                    <span data-active-item-text>{{selectedcategoryname}}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="freecourses-categorydropdown-{{uniqid}}">
+                    <li>
+                        <a class="dropdown-item" href="{{{allcategoriesurl}}}" role="menuitem" {{#allcategoriesactive}}aria-current="true"{{/allcategoriesactive}}>
+                            {{#str}}allcategories, block_freecourses{{/str}}
+                        </a>
+                    </li>
+                    {{#hascategoryoptions}}
+                        <li class="dropdown-divider" role="presentation">
+                            <span class="filler">&nbsp;</span>
+                        </li>
+                    {{/hascategoryoptions}}
+                    {{#categoryoptions}}
+                        <li>
+                            <a class="dropdown-item" href="{{{url}}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
+                                {{name}}
+                            </a>
+                        </li>
+                    {{/categoryoptions}}
+                </ul>
+            </div>
+        </div>
+    {{/showcategoryfilter}}
+
     {{#hascourses}}
         {{< core_course/coursecards }}
             {{$classes}}freecourses-carddeck{{/classes}}
