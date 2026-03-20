@@ -77,7 +77,7 @@ class main implements renderable, templatable {
      * @return array<string, mixed>
      */
     private function get_free_courses(renderer_base $output, int $selectedcategoryid): array {
-        global $CFG;
+        global $CFG, $USER;
 
         require_once($CFG->libdir . '/enrollib.php');
 
@@ -108,6 +108,10 @@ class main implements renderable, templatable {
             }
 
             $context = \context_course::instance($course->id);
+            if (is_enrolled($context, $USER, "", true)) {
+                continue;
+            }
+
             $fullname = format_string($course->fullname, true, ['context' => $context]);
             $categoryid = (int)$course->category;
             $coursecategory = $this->get_course_category_name($categoryid);

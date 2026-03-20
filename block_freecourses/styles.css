@@ -50,16 +50,16 @@
 .block.block_freecourses .freecourses-controls .freecourses-filter .btn.btn-secondary.dropdown-toggle {
     display: inline-flex;
     align-items: center;
-    background-color: var(--light, #f8f9fa) !important;
-    border-color: var(--light, #f8f9fa) !important;
+    background-color: var(--gray-200, #eef1f4) !important;
+    border-color: var(--gray-200, #eef1f4) !important;
     color: var(--body-color, #1d2125) !important;
 }
 
 .block.block_freecourses .freecourses-controls .freecourses-filter .btn.btn-secondary.dropdown-toggle:hover,
 .block.block_freecourses .freecourses-controls .freecourses-filter .btn.btn-secondary.dropdown-toggle:focus,
 .block.block_freecourses .freecourses-controls .freecourses-filter .btn.btn-secondary.dropdown-toggle:active {
-    background-color: var(--gray-200, #eef1f4) !important;
-    border-color: var(--gray-200, #eef1f4) !important;
+    background-color: #f3f5f7 !important;
+    border-color: #f3f5f7 !important;
     color: var(--body-color, #1d2125) !important;
 }
 
