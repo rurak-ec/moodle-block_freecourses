@@ -1,37 +1,79 @@
+.block.block_freecourses {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.block.block_freecourses > .card-body {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.block.block_freecourses > .card-body > .card-text {
+    margin-top: 0 !important;
+}
+
+.block.block_freecourses > .card-body > .card-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
 .block.block_freecourses .freecourses-carddeck {
+    --freecourses-gap: 0.5rem;
+    --freecourses-cols: 1;
     display: grid !important;
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 0.5rem;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(2, minmax(0, auto));
+    grid-auto-columns: calc((100% - (var(--freecourses-cols) - 1) * var(--freecourses-gap)) / var(--freecourses-cols));
+    gap: var(--freecourses-gap);
+    align-content: start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-gutter: stable both-edges;
+    padding-bottom: 0.25rem;
+    margin: 0 !important;
 }
 
 .block.block_freecourses .freecourses-carddeck > .col {
     width: auto !important;
     max-width: none !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    margin-bottom: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    scroll-snap-align: start;
 }
 
 .block.block_freecourses .freecourses-carddeck .course-card {
     width: 100%;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin: 0 !important;
+}
+
+.block.block_freecourses .freecourses-carddeck .coursename {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.block.block_freecourses .freecourses-carddeck .categoryname {
+    font-size: 0.75rem;
 }
 
 @media (min-width: 576px) {
     .block.block_freecourses .freecourses-carddeck {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        --freecourses-cols: 2;
     }
 }
 
 @media (min-width: 992px) {
     .block.block_freecourses .freecourses-carddeck {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        --freecourses-cols: 3;
     }
 }
 
 @media (min-width: 1200px) {
     .block.block_freecourses .freecourses-carddeck {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        --freecourses-cols: 4;
     }
 }
