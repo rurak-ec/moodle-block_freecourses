@@ -88,14 +88,14 @@
             {{/ core_course/coursecards }}
         </div>
 
-        <div class="alert alert-info mb-0 d-none" data-region="freecourses-noresults" role="status">
-            {{#str}}nosearchresults, block_freecourses{{/str}}
+        <div class="text-xs-center text-center mt-3 d-none" data-region="freecourses-noresults" role="status">
+            <p class="text-muted mt-3 mb-0">{{#str}}nocourses, core{{/str}}</p>
         </div>
     {{/hascourses}}
 
     {{^hascourses}}
-        <div class="alert alert-info mb-0" role="status">
-            {{#str}}nofreecourses, block_freecourses{{/str}}
+        <div class="text-xs-center text-center mt-3" role="status">
+            <p class="text-muted mt-3 mb-0">{{#str}}nocourses, core{{/str}}</p>
         </div>
     {{/hascourses}}
 </div>
@@ -108,9 +108,10 @@ require(['core/utils'], function(Utils) {
 
     var input = root.querySelector('[data-region="freecourses-search"] [data-action="search"]');
     var clearicon = root.querySelector('[data-region="freecourses-search"] [data-action="clearsearch"]');
+    var cardswrapper = root.querySelector('[data-region="freecourses-cards-wrapper"]');
     var noresults = root.querySelector('[data-region="freecourses-noresults"]');
 
-    if (!input || !clearicon || !noresults) {
+    if (!input || !clearicon || !cardswrapper || !noresults) {
         return;
     }
 
@@ -137,7 +138,9 @@ require(['core/utils'], function(Utils) {
             }
         });
 
-        noresults.classList.toggle('d-none', visiblecount !== 0);
+        var empty = visiblecount === 0;
+        cardswrapper.classList.toggle('d-none', empty);
+        noresults.classList.toggle('d-none', !empty);
     };
 
     var clearsearch = function() {

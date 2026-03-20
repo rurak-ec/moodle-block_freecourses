@@ -66,7 +66,7 @@
     --bs-gutter-y: 0;
     display: grid !important;
     grid-auto-flow: column;
-    grid-template-rows: repeat(2, minmax(0, auto));
+    grid-template-rows: repeat(1, minmax(0, auto));
     grid-auto-columns: calc((100% - (var(--freecourses-cols) - 1) * var(--freecourses-gap)) / var(--freecourses-cols));
     gap: var(--freecourses-gap);
     align-content: start;
@@ -86,7 +86,6 @@
     max-width: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    display: block !important;
     scroll-snap-align: start;
 }
 
