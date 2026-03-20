@@ -19,37 +19,55 @@
     margin-bottom: 0.75rem;
 }
 
-.block.block_freecourses .freecourses-filterbar {
+.block.block_freecourses .freecourses-controls {
+    width: 100%;
     margin-bottom: 0.5rem !important;
 }
 
-.block.block_freecourses .freecourses-filterbar .dropdown-toggle {
+.block.block_freecourses .freecourses-controls .search-input-wrapper {
+    margin-bottom: 0 !important;
+}
+
+.block.block_freecourses .freecourses-controls .dropdown {
+    margin-left: auto;
+}
+
+.block.block_freecourses .freecourses-controls .dropdown-toggle {
     display: inline-flex;
     align-items: center;
 }
 
-.block.block_freecourses .freecourses-filterbar [data-active-item-text] {
-    max-width: 18rem;
+.block.block_freecourses .freecourses-controls [data-active-item-text] {
+    max-width: 14rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+.block.block_freecourses [data-region="freecourses-cards-wrapper"] {
+    margin: 0;
+    padding: 0;
+}
+
 .block.block_freecourses .freecourses-carddeck {
     --freecourses-gap: 0.5rem;
     --freecourses-cols: 1;
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
     display: grid !important;
     grid-auto-flow: column;
     grid-template-rows: repeat(2, minmax(0, auto));
     grid-auto-columns: calc((100% - (var(--freecourses-cols) - 1) * var(--freecourses-gap)) / var(--freecourses-cols));
     gap: var(--freecourses-gap);
     align-content: start;
+    justify-content: start;
+    justify-items: stretch;
     overflow-x: auto;
     overflow-y: hidden;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
-    scrollbar-gutter: stable both-edges;
-    padding-bottom: 0.25rem;
+    scrollbar-gutter: stable;
+    padding: 0 0 0.25rem 0 !important;
     margin: 0 !important;
 }
 
@@ -95,16 +113,22 @@
 }
 
 @media (max-width: 575.98px) {
-    .block.block_freecourses .freecourses-filterbar .dropdown {
+    .block.block_freecourses .freecourses-controls [data-region="freecourses-search"] {
         width: 100%;
+        margin-right: 0 !important;
     }
 
-    .block.block_freecourses .freecourses-filterbar .dropdown-toggle {
+    .block.block_freecourses .freecourses-controls .dropdown {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .block.block_freecourses .freecourses-controls .dropdown-toggle {
         width: 100%;
         justify-content: center;
     }
 
-    .block.block_freecourses .freecourses-filterbar [data-active-item-text] {
+    .block.block_freecourses .freecourses-controls [data-active-item-text] {
         max-width: calc(100vw - 10rem);
     }
 }

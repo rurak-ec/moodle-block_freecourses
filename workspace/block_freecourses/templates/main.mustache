@@ -21,61 +21,74 @@
 }}
 
 <div id="block-freecourses-{{uniqid}}" class="block_freecourses" data-region="freecourses">
-    {{#showcategoryfilter}}
-        <div role="search" class="freecourses-filterbar d-flex justify-content-end align-items-center mb-2" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
-            <div class="dropdown mb-1">
-                <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
-                    <span class="d-flex align-items-center me-2">{{#pix}}i/filter, core{{/pix}}</span>
-                    <span data-active-item-text>{{selectedcategoryname}}</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="freecourses-categorydropdown-{{uniqid}}">
-                    <li>
-                        <a class="dropdown-item" href="{{{allcategoriesurl}}}" role="menuitem" {{#allcategoriesactive}}aria-current="true"{{/allcategoriesactive}}>
-                            {{#str}}allcategories, block_freecourses{{/str}}
-                        </a>
-                    </li>
-                    {{#hascategoryoptions}}
-                        <li class="dropdown-divider" role="presentation">
-                            <span class="filler">&nbsp;</span>
-                        </li>
-                    {{/hascategoryoptions}}
-                    {{#categoryoptions}}
+    {{#hascourses}}
+        <div role="search" class="freecourses-controls d-flex flex-wrap align-items-center mb-2" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
+            <div class="mb-1 me-1 flex-grow-1" data-region="freecourses-search">
+                {{< core/search_input_auto }}
+                    {{$label}}{{#str}}searchcourses, block_freecourses{{/str}}{{/label}}
+                    {{$placeholder}}{{#str}}search, core{{/str}}{{/placeholder}}
+                {{/ core/search_input_auto }}
+            </div>
+
+            {{#showcategoryfilter}}
+                <div class="dropdown mb-1">
+                    <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
+                        <span class="d-flex align-items-center me-2">{{#pix}}i/filter, core{{/pix}}</span>
+                        <span data-active-item-text>{{selectedcategoryname}}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="freecourses-categorydropdown-{{uniqid}}">
                         <li>
-                            <a class="dropdown-item" href="{{{url}}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
-                                {{name}}
+                            <a class="dropdown-item" href="{{{allcategoriesurl}}}" role="menuitem" {{#allcategoriesactive}}aria-current="true"{{/allcategoriesactive}}>
+                                {{#str}}allcategories, block_freecourses{{/str}}
                             </a>
                         </li>
-                    {{/categoryoptions}}
-                </ul>
-            </div>
-        </div>
-    {{/showcategoryfilter}}
-
-    {{#hascourses}}
-        {{< core_course/coursecards }}
-            {{$classes}}freecourses-carddeck{{/classes}}
-            {{$coursename}}
-                <span class="multiline" title="{{fullname}}">
-                    <span class="visually-hidden">{{{fullname}}}</span>
-                    <span aria-hidden="true">
-                        {{#shortentext}}55, {{{fullname}}}{{/shortentext}}
-                    </span>
-                </span>
-            {{/coursename}}
-            {{$coursecategory}}
-                {{#showcoursecategory}}
-                    <span class="visually-hidden">
-                        {{#str}}aria:coursecategory, core_course{{/str}}
-                    </span>
-                    <span class="categoryname text-truncate">{{{coursecategory}}}</span>
-                {{/showcoursecategory}}
-            {{/coursecategory}}
-            {{$progress}}
-                <div class="card-footer border-0 bg-white w-100 pt-0">
-                    <a href="{{enrolurl}}" class="btn btn-primary w-100">{{#str}}enrolcourse, block_freecourses{{/str}}</a>
+                        {{#hascategoryoptions}}
+                            <li class="dropdown-divider" role="presentation">
+                                <span class="filler">&nbsp;</span>
+                            </li>
+                        {{/hascategoryoptions}}
+                        {{#categoryoptions}}
+                            <li>
+                                <a class="dropdown-item" href="{{{url}}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
+                                    {{name}}
+                                </a>
+                            </li>
+                        {{/categoryoptions}}
+                    </ul>
                 </div>
-            {{/progress}}
-        {{/ core_course/coursecards }}
+            {{/showcategoryfilter}}
+        </div>
+
+        <div data-region="freecourses-cards-wrapper">
+            {{< core_course/coursecards }}
+                {{$classes}}freecourses-carddeck{{/classes}}
+                {{$coursename}}
+                    <span class="multiline" title="{{fullname}}">
+                        <span class="visually-hidden">{{{fullname}}}</span>
+                        <span aria-hidden="true">
+                            {{#shortentext}}55, {{{fullname}}}{{/shortentext}}
+                        </span>
+                    </span>
+                {{/coursename}}
+                {{$coursecategory}}
+                    {{#showcoursecategory}}
+                        <span class="visually-hidden">
+                            {{#str}}aria:coursecategory, core_course{{/str}}
+                        </span>
+                        <span class="categoryname text-truncate">{{{coursecategory}}}</span>
+                    {{/showcoursecategory}}
+                {{/coursecategory}}
+                {{$progress}}
+                    <div class="card-footer border-0 bg-white w-100 pt-0">
+                        <a href="{{enrolurl}}" class="btn btn-primary w-100">{{#str}}enrolcourse, block_freecourses{{/str}}</a>
+                    </div>
+                {{/progress}}
+            {{/ core_course/coursecards }}
+        </div>
+
+        <div class="alert alert-info mb-0 d-none" data-region="freecourses-noresults" role="status">
+            {{#str}}nosearchresults, block_freecourses{{/str}}
+        </div>
     {{/hascourses}}
 
     {{^hascourses}}
@@ -84,3 +97,46 @@
         </div>
     {{/hascourses}}
 </div>
+{{#js}}
+require(['jquery'], function($) {
+    var root = $('#block-freecourses-{{uniqid}}');
+    var searchinput = root.find('[data-region="freecourses-search"] input[type="search"], [data-region="freecourses-search"] input[type="text"]').first();
+    var cards = root.find('[data-region="card-deck"] > .col');
+    var noresults = root.find('[data-region="freecourses-noresults"]');
+
+    if (!searchinput.length || !cards.length) {
+        return;
+    }
+
+    var normalise = function(value) {
+        var text = (value || '').toString().toLowerCase().trim();
+        if (text.normalize) {
+            text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+        return text;
+    };
+
+    var filtercards = function() {
+        var term = normalise(searchinput.val());
+        var visiblecount = 0;
+
+        cards.each(function() {
+            var card = $(this);
+            var title = normalise(card.find('.coursename').first().text());
+            var visible = !term || title.indexOf(term) !== -1;
+            card.toggleClass('d-none', !visible);
+            if (visible) {
+                visiblecount++;
+            }
+        });
+
+        if (visiblecount === 0) {
+            noresults.removeClass('d-none');
+        } else {
+            noresults.addClass('d-none');
+        }
+    };
+
+    searchinput.on('input', filtercards);
+});
+{{/js}}

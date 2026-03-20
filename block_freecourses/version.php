@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026032002;
+$plugin->version   = 2026032003;
 $plugin->requires  = 2025092600;
 $plugin->component = 'block_freecourses';
