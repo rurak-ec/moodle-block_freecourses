@@ -22,41 +22,43 @@
 
 <div id="block-freecourses-{{uniqid}}" class="block_freecourses" data-region="freecourses">
     {{#hascourses}}
-        <div role="search" class="freecourses-controls mb-2" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
-            <div data-region="freecourses-search" class="freecourses-search">
-                {{< core/search_input_auto }}
-                    {{$label}}{{#str}}searchcourses, block_freecourses{{/str}}{{/label}}
-                    {{$placeholder}}{{#str}}search, core{{/str}}{{/placeholder}}
-                {{/ core/search_input_auto }}
-            </div>
+        <div role="search" data-region="filter" class="d-flex align-items-center my-2 freecourses-controls" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
+            <div class="d-flex flex-wrap gap-1 align-items-center w-100">
+                <div class="mb-1 me-1 flex-grow-1 freecourses-search" data-region="freecourses-search">
+                    {{< core/search_input_auto }}
+                        {{$label}}{{#str}}searchcourses, block_freecourses{{/str}}{{/label}}
+                        {{$placeholder}}{{#str}}search, core{{/str}}{{/placeholder}}
+                    {{/ core/search_input_auto }}
+                </div>
 
-            {{#showcategoryfilter}}
-                <div class="dropdown freecourses-filter">
-                    <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-outline-secondary bg-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
-                        <span class="d-flex align-items-center me-2">{{#pix}}i/filter, core{{/pix}}</span>
-                        <span data-active-item-text>{{selectedcategoryname}}</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="freecourses-categorydropdown-{{uniqid}}">
-                        <li>
-                            <a class="dropdown-item" href="{{{allcategoriesurl}}}" role="menuitem" {{#allcategoriesactive}}aria-current="true"{{/allcategoriesactive}}>
-                                {{#str}}allcategories, block_freecourses{{/str}}
-                            </a>
-                        </li>
-                        {{#hascategoryoptions}}
-                            <li class="dropdown-divider" role="presentation">
-                                <span class="filler">&nbsp;</span>
-                            </li>
-                        {{/hascategoryoptions}}
-                        {{#categoryoptions}}
+                {{#showcategoryfilter}}
+                    <div class="dropdown mb-1 freecourses-filter">
+                        <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-outline-secondary bg-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
+                            <span class="d-flex align-items-center me-2">{{#pix}}i/filter, core{{/pix}}</span>
+                            <span data-active-item-text>{{selectedcategoryname}}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="freecourses-categorydropdown-{{uniqid}}">
                             <li>
-                                <a class="dropdown-item" href="{{{url}}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
-                                    {{name}}
+                                <a class="dropdown-item" href="{{{allcategoriesurl}}}" role="menuitem" {{#allcategoriesactive}}aria-current="true"{{/allcategoriesactive}}>
+                                    {{#str}}allcategories, block_freecourses{{/str}}
                                 </a>
                             </li>
-                        {{/categoryoptions}}
-                    </ul>
-                </div>
-            {{/showcategoryfilter}}
+                            {{#hascategoryoptions}}
+                                <li class="dropdown-divider" role="presentation">
+                                    <span class="filler">&nbsp;</span>
+                                </li>
+                            {{/hascategoryoptions}}
+                            {{#categoryoptions}}
+                                <li>
+                                    <a class="dropdown-item" href="{{{url}}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
+                                        {{name}}
+                                    </a>
+                                </li>
+                            {{/categoryoptions}}
+                        </ul>
+                    </div>
+                {{/showcategoryfilter}}
+            </div>
         </div>
 
         <div data-region="freecourses-cards-wrapper">
@@ -98,15 +100,17 @@
     {{/hascourses}}
 </div>
 {{#js}}
-(function() {
+require(['core/utils'], function(Utils) {
     var root = document.getElementById('block-freecourses-{{uniqid}}');
     if (!root) {
         return;
     }
 
-    var searchinput = root.querySelector('[data-region="freecourses-search"] input[data-region="input"]');
+    var input = root.querySelector('[data-region="freecourses-search"] [data-action="search"]');
+    var clearicon = root.querySelector('[data-region="freecourses-search"] [data-action="clearsearch"]');
     var noresults = root.querySelector('[data-region="freecourses-noresults"]');
-    if (!searchinput || !noresults) {
+
+    if (!input || !clearicon || !noresults) {
         return;
     }
 
@@ -118,15 +122,15 @@
         return text;
     };
 
-    var filtercards = function() {
+    var filtercards = function(term) {
         var cards = root.querySelectorAll('[data-region="card-deck"] > .col');
-        var term = normalise(searchinput.value);
+        var searchterm = normalise(term);
         var visiblecount = 0;
 
         cards.forEach(function(card) {
             var titleelement = card.querySelector('.coursename');
             var title = normalise(titleelement ? titleelement.textContent : '');
-            var visible = !term || title.indexOf(term) !== -1;
+            var visible = !searchterm || title.indexOf(searchterm) !== -1;
             card.classList.toggle('d-none', !visible);
             if (visible) {
                 visiblecount++;
@@ -136,6 +140,30 @@
         noresults.classList.toggle('d-none', visiblecount !== 0);
     };
 
-    searchinput.addEventListener('input', filtercards);
-})();
+    var clearsearch = function() {
+        clearicon.classList.add('d-none');
+        filtercards('');
+    };
+
+    var activesearch = function() {
+        clearicon.classList.remove('d-none');
+    };
+
+    clearicon.addEventListener('click', function(e) {
+        e.preventDefault();
+        input.value = '';
+        input.focus();
+        clearsearch();
+    });
+
+    input.addEventListener('input', Utils.debounce(function() {
+        var value = input.value.trim();
+        if (value === '') {
+            clearsearch();
+            return;
+        }
+        activesearch();
+        filtercards(value);
+    }, 1000));
+});
 {{/js}}

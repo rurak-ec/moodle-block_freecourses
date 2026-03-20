@@ -20,32 +20,29 @@
 }
 
 .block.block_freecourses .freecourses-controls {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-    column-gap: 0.5rem;
-    row-gap: 0.5rem;
-    width: 100%;
-    margin-bottom: 0.5rem !important;
-}
-
-.block.block_freecourses .freecourses-search,
-.block.block_freecourses .freecourses-search .simplesearchform,
-.block.block_freecourses .freecourses-search .searchbar {
     width: 100%;
 }
 
-.block.block_freecourses .freecourses-filter {
-    justify-self: end;
+.block.block_freecourses .freecourses-controls .freecourses-search {
+    min-width: 0;
 }
 
-.block.block_freecourses .freecourses-filter .dropdown-toggle {
+.block.block_freecourses .freecourses-controls .freecourses-search .simplesearchform,
+.block.block_freecourses .freecourses-controls .freecourses-search .searchbar {
+    width: 100%;
+}
+
+.block.block_freecourses .freecourses-controls .freecourses-filter {
+    margin-left: auto;
+}
+
+.block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle {
     display: inline-flex;
     align-items: center;
     background-color: var(--white, #fff);
 }
 
-.block.block_freecourses .freecourses-filter [data-active-item-text] {
+.block.block_freecourses .freecourses-controls .freecourses-filter [data-active-item-text] {
     max-width: 14rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -89,12 +86,15 @@
     max-width: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    display: block !important;
     scroll-snap-align: start;
 }
 
-.block.block_freecourses .freecourses-carddeck .course-card {
+.block.block_freecourses .freecourses-carddeck .course-card,
+.block.block_freecourses .freecourses-carddeck .course-card.mx-1 {
     width: 100%;
-    margin: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 .block.block_freecourses .freecourses-carddeck .coursename {
@@ -126,15 +126,12 @@
 }
 
 @media (max-width: 767.98px) {
-    .block.block_freecourses .freecourses-controls {
-        grid-template-columns: minmax(0, 1fr);
+    .block.block_freecourses .freecourses-controls .freecourses-filter {
+        margin-left: 0;
+        width: 100%;
     }
 
-    .block.block_freecourses .freecourses-filter {
-        justify-self: stretch;
-    }
-
-    .block.block_freecourses .freecourses-filter .dropdown-toggle {
+    .block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle {
         width: 100%;
         justify-content: center;
     }
