@@ -22,7 +22,7 @@
 
 <div id="block-freecourses-{{uniqid}}" class="block_freecourses" data-region="freecourses">
     {{#hascourses}}
-        <div role="search" data-region="filter" class="d-flex flex-wrap align-items-center my-2 freecourses-controls" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
+        <div role="search" data-region="filter" class="d-flex align-items-center my-2 freecourses-controls" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
             <div class="mb-1 me-1 flex-grow-1 freecourses-search" data-region="freecourses-search">
                 {{< core/search_input_auto }}
                     {{$label}}{{#str}}searchcourses, block_freecourses{{/str}}{{/label}}
