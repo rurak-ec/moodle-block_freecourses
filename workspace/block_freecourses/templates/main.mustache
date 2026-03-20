@@ -22,8 +22,8 @@
 
 <div id="block-freecourses-{{uniqid}}" class="block_freecourses" data-region="freecourses">
     {{#hascourses}}
-        <div role="search" class="freecourses-controls d-flex flex-wrap align-items-center mb-2" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
-            <div class="mb-1 me-1 flex-grow-1" data-region="freecourses-search">
+        <div role="search" class="freecourses-controls mb-2" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
+            <div data-region="freecourses-search" class="freecourses-search">
                 {{< core/search_input_auto }}
                     {{$label}}{{#str}}searchcourses, block_freecourses{{/str}}{{/label}}
                     {{$placeholder}}{{#str}}search, core{{/str}}{{/placeholder}}
@@ -31,8 +31,8 @@
             </div>
 
             {{#showcategoryfilter}}
-                <div class="dropdown mb-1">
-                    <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
+                <div class="dropdown freecourses-filter">
+                    <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-outline-secondary bg-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
                         <span class="d-flex align-items-center me-2">{{#pix}}i/filter, core{{/pix}}</span>
                         <span data-active-item-text>{{selectedcategoryname}}</span>
                     </button>
@@ -98,45 +98,44 @@
     {{/hascourses}}
 </div>
 {{#js}}
-require(['jquery'], function($) {
-    var root = $('#block-freecourses-{{uniqid}}');
-    var searchinput = root.find('[data-region="freecourses-search"] input[type="search"], [data-region="freecourses-search"] input[type="text"]').first();
-    var cards = root.find('[data-region="card-deck"] > .col');
-    var noresults = root.find('[data-region="freecourses-noresults"]');
+(function() {
+    var root = document.getElementById('block-freecourses-{{uniqid}}');
+    if (!root) {
+        return;
+    }
 
-    if (!searchinput.length || !cards.length) {
+    var searchinput = root.querySelector('[data-region="freecourses-search"] input[data-region="input"]');
+    var noresults = root.querySelector('[data-region="freecourses-noresults"]');
+    if (!searchinput || !noresults) {
         return;
     }
 
     var normalise = function(value) {
         var text = (value || '').toString().toLowerCase().trim();
-        if (text.normalize) {
+        if (typeof text.normalize === 'function') {
             text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         }
         return text;
     };
 
     var filtercards = function() {
-        var term = normalise(searchinput.val());
+        var cards = root.querySelectorAll('[data-region="card-deck"] > .col');
+        var term = normalise(searchinput.value);
         var visiblecount = 0;
 
-        cards.each(function() {
-            var card = $(this);
-            var title = normalise(card.find('.coursename').first().text());
+        cards.forEach(function(card) {
+            var titleelement = card.querySelector('.coursename');
+            var title = normalise(titleelement ? titleelement.textContent : '');
             var visible = !term || title.indexOf(term) !== -1;
-            card.toggleClass('d-none', !visible);
+            card.classList.toggle('d-none', !visible);
             if (visible) {
                 visiblecount++;
             }
         });
 
-        if (visiblecount === 0) {
-            noresults.removeClass('d-none');
-        } else {
-            noresults.addClass('d-none');
-        }
+        noresults.classList.toggle('d-none', visiblecount !== 0);
     };
 
-    searchinput.on('input', filtercards);
-});
+    searchinput.addEventListener('input', filtercards);
+})();
 {{/js}}
