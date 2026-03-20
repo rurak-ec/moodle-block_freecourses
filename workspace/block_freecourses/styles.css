@@ -21,10 +21,12 @@
 
 .block.block_freecourses .freecourses-controls {
     width: 100%;
+    gap: 0;
 }
 
 .block.block_freecourses .freecourses-controls .freecourses-search {
     min-width: 0;
+    flex: 1 1 auto;
 }
 
 .block.block_freecourses .freecourses-controls .freecourses-search .simplesearchform,
@@ -32,14 +34,28 @@
     width: 100%;
 }
 
+.block.block_freecourses .freecourses-controls .freecourses-search .searchbar {
+    min-width: 0;
+}
+
 .block.block_freecourses .freecourses-controls .freecourses-filter {
-    margin-left: auto;
+    flex: 0 0 auto;
 }
 
 .block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle {
     display: inline-flex;
     align-items: center;
-    background-color: var(--white, #fff);
+    background-color: var(--light, #f8f9fa);
+    border-color: var(--light, #f8f9fa);
+    color: var(--body-color, inherit);
+}
+
+.block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle:hover,
+.block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle:focus,
+.block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle:active {
+    background-color: var(--light, #f8f9fa);
+    border-color: var(--secondary, #ced4da);
+    color: var(--body-color, inherit);
 }
 
 .block.block_freecourses .freecourses-controls .freecourses-filter [data-active-item-text] {
@@ -125,8 +141,13 @@
 }
 
 @media (max-width: 767.98px) {
+    .block.block_freecourses .freecourses-controls .freecourses-search {
+        width: 100%;
+        flex: 1 1 100%;
+        margin-right: 0 !important;
+    }
+
     .block.block_freecourses .freecourses-controls .freecourses-filter {
-        margin-left: 0;
         width: 100%;
     }
 

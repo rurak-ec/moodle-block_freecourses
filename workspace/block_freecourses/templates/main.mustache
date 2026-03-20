@@ -22,43 +22,43 @@
 
 <div id="block-freecourses-{{uniqid}}" class="block_freecourses" data-region="freecourses">
     {{#hascourses}}
-        <div role="search" data-region="filter" class="d-flex align-items-center my-2 freecourses-controls" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
-            <div class="d-flex flex-wrap gap-1 align-items-center w-100">
-                <div class="mb-1 me-1 flex-grow-1 freecourses-search" data-region="freecourses-search">
-                    {{< core/search_input_auto }}
-                        {{$label}}{{#str}}searchcourses, block_freecourses{{/str}}{{/label}}
-                        {{$placeholder}}{{#str}}search, core{{/str}}{{/placeholder}}
-                    {{/ core/search_input_auto }}
-                </div>
+        <div role="search" data-region="filter" class="d-flex flex-wrap align-items-center my-2 freecourses-controls" aria-label="{{#str}}filterbycategory, block_freecourses{{/str}}">
+            <div class="mb-1 me-1 flex-grow-1 freecourses-search" data-region="freecourses-search">
+                {{< core/search_input_auto }}
+                    {{$label}}{{#str}}searchcourses, block_freecourses{{/str}}{{/label}}
+                    {{$placeholder}}{{#str}}search, core{{/str}}{{/placeholder}}
+                {{/ core/search_input_auto }}
+            </div>
 
-                {{#showcategoryfilter}}
-                    <div class="dropdown mb-1 freecourses-filter">
-                        <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-outline-secondary bg-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
-                            <span class="d-flex align-items-center me-2">{{#pix}}i/filter, core{{/pix}}</span>
-                            <span data-active-item-text>{{selectedcategoryname}}</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="freecourses-categorydropdown-{{uniqid}}">
+            {{#showcategoryfilter}}
+                <div class="dropdown mb-1 freecourses-filter">
+                    <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.25 4.75H4.75L9.31174 10.4522C9.59544 10.8068 9.75 11.2474 9.75 11.7016V18.25C9.75 18.8023 10.1977 19.25 10.75 19.25H13.25C13.8023 19.25 14.25 18.8023 14.25 18.25V11.7016C14.25 11.2474 14.4046 10.8068 14.6883 10.4522L19.25 4.75Z"></path>
+                        </svg>
+                        <span class="d-sm-inline-block ms-2" data-active-item-text>{{selectedcategoryname}}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="freecourses-categorydropdown-{{uniqid}}">
+                        <li>
+                            <a class="dropdown-item" href="{{{allcategoriesurl}}}" role="menuitem" {{#allcategoriesactive}}aria-current="true"{{/allcategoriesactive}}>
+                                {{#str}}allcategories, block_freecourses{{/str}}
+                            </a>
+                        </li>
+                        {{#hascategoryoptions}}
+                            <li class="dropdown-divider" role="presentation">
+                                <span class="filler">&nbsp;</span>
+                            </li>
+                        {{/hascategoryoptions}}
+                        {{#categoryoptions}}
                             <li>
-                                <a class="dropdown-item" href="{{{allcategoriesurl}}}" role="menuitem" {{#allcategoriesactive}}aria-current="true"{{/allcategoriesactive}}>
-                                    {{#str}}allcategories, block_freecourses{{/str}}
+                                <a class="dropdown-item" href="{{{url}}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
+                                    {{name}}
                                 </a>
                             </li>
-                            {{#hascategoryoptions}}
-                                <li class="dropdown-divider" role="presentation">
-                                    <span class="filler">&nbsp;</span>
-                                </li>
-                            {{/hascategoryoptions}}
-                            {{#categoryoptions}}
-                                <li>
-                                    <a class="dropdown-item" href="{{{url}}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
-                                        {{name}}
-                                    </a>
-                                </li>
-                            {{/categoryoptions}}
-                        </ul>
-                    </div>
-                {{/showcategoryfilter}}
-            </div>
+                        {{/categoryoptions}}
+                    </ul>
+                </div>
+            {{/showcategoryfilter}}
         </div>
 
         <div data-region="freecourses-cards-wrapper">
@@ -115,6 +115,17 @@ require(['core/utils'], function(Utils) {
         return;
     }
 
+    var getcards = function() {
+        var cards = root.querySelectorAll('[data-region="card-deck"] [data-region="course-content"]');
+        if (!cards.length) {
+            cards = root.querySelectorAll('[data-region="card-deck"] .course-card');
+        }
+
+        return Array.prototype.map.call(cards, function(card) {
+            return card.closest('.col') || card;
+        });
+    };
+
     var normalise = function(value) {
         var text = (value || '').toString().toLowerCase().trim();
         if (typeof text.normalize === 'function') {
@@ -123,8 +134,17 @@ require(['core/utils'], function(Utils) {
         return text;
     };
 
+    var showallcards = function() {
+        var cards = getcards();
+        cards.forEach(function(card) {
+            card.classList.remove('d-none');
+        });
+        cardswrapper.classList.remove('d-none');
+        noresults.classList.add('d-none');
+    };
+
     var filtercards = function(term) {
-        var cards = root.querySelectorAll('[data-region="card-deck"] > .col');
+        var cards = getcards();
         var searchterm = normalise(term);
         var visiblecount = 0;
 
@@ -145,7 +165,7 @@ require(['core/utils'], function(Utils) {
 
     var clearsearch = function() {
         clearicon.classList.add('d-none');
-        filtercards('');
+        showallcards();
     };
 
     var activesearch = function() {
@@ -165,6 +185,7 @@ require(['core/utils'], function(Utils) {
             clearsearch();
             return;
         }
+
         activesearch();
         filtercards(value);
     }, 1000));
