@@ -15,25 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy provider for block_freecourses.
+ * Cache definitions for block_freecourses.
  *
  * @package    block_freecourses
  * @copyright  2026 Rurak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_freecourses\privacy;
+defined('MOODLE_INTERNAL') || die();
 
-/**
- * Privacy subsystem provider.
- */
-class provider implements \core_privacy\local\metadata\null_provider {
-    /**
-     * Explain why no personal data is stored.
-     *
-     * @return string
-     */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
-    }
-}
+$definitions = [
+    // The site-wide list of courses that are open for free self-enrolment.
+    // This is user-independent (whether a course is "free" does not depend on
+    // who is looking), so it is shared across all users via an application cache
+    // with a short TTL; per-user "already enrolled" filtering happens at render time.
+    'candidates' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => false,
+        'ttl' => 300,
+    ],
+];

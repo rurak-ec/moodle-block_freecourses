@@ -18,17 +18,17 @@
  * Cadenas de idioma para block_freecourses.
  *
  * @package    block_freecourses
- * @copyright  2026
+ * @copyright  2026 Rurak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Cursos Gratuitos';
-$string['freecourses:myaddinstance'] = 'Agregar un nuevo bloque Cursos Gratuitos al Tablero';
-$string['searchcourses'] = 'Buscar cursos';
-$string['allcategories'] = 'Todos';
+$string['allcategories'] = 'Todas las categorías';
+$string['aria:categorydropdown'] = 'Filtrar cursos por categoría';
+$string['enrolcourse'] = 'Inscribirse';
 $string['filterbycategory'] = 'Filtrar por categoría';
-$string['aria:categorydropdown'] = 'Menú desplegable para filtrar por categoría';
-$string['enrolcourse'] = 'Inscribirse al Curso';
+$string['freecourses:myaddinstance'] = 'Agregar un nuevo bloque Cursos gratuitos al Tablero';
 $string['nofreecourses'] = 'No hay cursos gratuitos disponibles en este momento.';
 $string['nosearchresults'] = 'No se encontraron cursos con ese texto.';
-$string['privacy:metadata'] = 'El plugin block_freecourses no almacena datos personales.';
+$string['pluginname'] = 'Cursos gratuitos';
+$string['privacy:metadata'] = 'El bloque Cursos gratuitos no almacena datos personales.';
+$string['searchcourses'] = 'Buscar cursos';

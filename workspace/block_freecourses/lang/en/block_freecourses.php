@@ -18,17 +18,17 @@
  * Language strings for block_freecourses.
  *
  * @package    block_freecourses
- * @copyright  2026
+ * @copyright  2026 Rurak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Cursos Gratuitos';
-$string['freecourses:myaddinstance'] = 'Add a new Cursos Gratuitos block to Dashboard';
-$string['searchcourses'] = 'Search courses';
-$string['allcategories'] = 'All';
+$string['allcategories'] = 'All categories';
+$string['aria:categorydropdown'] = 'Filter courses by category';
+$string['enrolcourse'] = 'Enrol';
 $string['filterbycategory'] = 'Filter by category';
-$string['aria:categorydropdown'] = 'Category filter dropdown';
-$string['enrolcourse'] = 'Enroll in course';
-$string['nofreecourses'] = 'No free courses are currently available.';
-$string['nosearchresults'] = 'No courses were found for that search.';
-$string['privacy:metadata'] = 'The block_freecourses plugin does not store any personal data.';
+$string['freecourses:myaddinstance'] = 'Add a new Free courses block to the Dashboard';
+$string['nofreecourses'] = 'There are no free courses available right now.';
+$string['nosearchresults'] = 'No courses match your search.';
+$string['pluginname'] = 'Free courses';
+$string['privacy:metadata'] = 'The Free courses block does not store any personal data.';
+$string['searchcourses'] = 'Search courses';

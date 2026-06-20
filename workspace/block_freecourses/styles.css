@@ -1,16 +1,22 @@
+/* Free courses block.
+ *
+ * Colours come from the active theme (Bootstrap variables), so the block adapts to light and
+ * dark modes. Selectors are specific enough to override Bootstrap defaults without !important.
+ */
+
 .block.block_freecourses {
-    border: 0 !important;
-    box-shadow: none !important;
-    background: transparent !important;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
 }
 
 .block.block_freecourses > .card-body {
-    padding: 0 !important;
-    background: transparent !important;
+    padding: 0;
+    background: transparent;
 }
 
 .block.block_freecourses > .card-body > .card-text {
-    margin-top: 0 !important;
+    margin-top: 0;
 }
 
 .block.block_freecourses > .card-body > .card-title {
@@ -19,6 +25,7 @@
     margin-bottom: 0.75rem;
 }
 
+/* Controls row: search box + category filter. */
 .block.block_freecourses .freecourses-controls {
     width: 100%;
     gap: 0.5rem;
@@ -30,37 +37,21 @@
     flex: 1 1 0;
 }
 
-.block.block_freecourses .freecourses-controls .freecourses-search .simplesearchform {
-    width: 100%;
-    max-width: none !important;
-    flex: 1 1 auto;
-}
-
+.block.block_freecourses .freecourses-controls .freecourses-search .simplesearchform,
 .block.block_freecourses .freecourses-controls .freecourses-search .searchbar {
     width: 100%;
-    max-width: none !important;
+    max-width: none;
     min-width: 0;
-    flex-wrap: nowrap;
 }
 
 .block.block_freecourses .freecourses-controls .freecourses-filter {
     flex: 0 0 auto;
 }
 
-.block.block_freecourses .freecourses-controls .freecourses-filter .btn.btn-secondary.dropdown-toggle {
+/* Use the theme's own secondary-button styling so colours follow light/dark mode. */
+.block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle {
     display: inline-flex;
     align-items: center;
-    background-color: var(--gray-200, #eef1f4) !important;
-    border-color: var(--gray-200, #eef1f4) !important;
-    color: var(--body-color, #1d2125) !important;
-}
-
-.block.block_freecourses .freecourses-controls .freecourses-filter .btn.btn-secondary.dropdown-toggle:hover,
-.block.block_freecourses .freecourses-controls .freecourses-filter .btn.btn-secondary.dropdown-toggle:focus,
-.block.block_freecourses .freecourses-controls .freecourses-filter .btn.btn-secondary.dropdown-toggle:active {
-    background-color: #f3f5f7 !important;
-    border-color: #f3f5f7 !important;
-    color: var(--body-color, #1d2125) !important;
 }
 
 .block.block_freecourses .freecourses-controls .freecourses-filter [data-active-item-text] {
@@ -70,14 +61,17 @@
     white-space: nowrap;
 }
 
+/* Visible keyboard focus for the interactive controls. */
+.block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle:focus-visible,
+.block.block_freecourses .freecourses-search [data-action="search"]:focus-visible {
+    outline: 2px solid var(--bs-primary, #0f6cbf);
+    outline-offset: 2px;
+}
+
+/* Card deck: a horizontally scrolling, responsive grid (2/3/4 columns). */
 .block.block_freecourses [data-region="freecourses-cards-wrapper"] {
     margin: 0;
     padding: 0;
-}
-
-.block.block_freecourses .freecourses-carddeck.row {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
 }
 
 .block.block_freecourses .freecourses-carddeck {
@@ -85,7 +79,7 @@
     --freecourses-cols: 2;
     --bs-gutter-x: 0;
     --bs-gutter-y: 0;
-    display: grid !important;
+    display: grid;
     grid-auto-flow: column;
     grid-template-rows: repeat(1, minmax(0, auto));
     grid-auto-columns: calc((100% - (var(--freecourses-cols) - 1) * var(--freecourses-gap)) / var(--freecourses-cols));
@@ -93,28 +87,23 @@
     align-content: start;
     justify-content: start;
     justify-items: stretch;
+    margin: 0;
+    padding: 0 0 0.25rem;
     overflow-x: auto;
     overflow-y: hidden;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
-    scroll-padding-left: 0;
-    padding: 0 0 0.25rem 0 !important;
-    margin: 0 !important;
+    scroll-padding-inline-start: 0;
 }
 
 .block.block_freecourses .freecourses-carddeck > .col {
-    width: auto !important;
-    max-width: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    display: flex;
     scroll-snap-align: start;
 }
 
-.block.block_freecourses .freecourses-carddeck .course-card,
-.block.block_freecourses .freecourses-carddeck .course-card.mx-1 {
-    width: 100%;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+/* Let each card fill its grid cell; the card's own small margin becomes the gutter. */
+.block.block_freecourses .freecourses-carddeck .course-card {
+    flex: 1 1 auto;
 }
 
 .block.block_freecourses .freecourses-carddeck .coursename {
@@ -153,7 +142,6 @@
     .block.block_freecourses .freecourses-controls .freecourses-search {
         width: 100%;
         flex: 1 1 100%;
-        margin-right: 0 !important;
     }
 
     .block.block_freecourses .freecourses-controls .freecourses-filter {
@@ -162,8 +150,7 @@
         justify-content: flex-end;
     }
 
-    .block.block_freecourses .freecourses-controls .freecourses-filter .btn.btn-secondary.dropdown-toggle {
-        width: auto;
+    .block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle {
         justify-content: center;
     }
 }

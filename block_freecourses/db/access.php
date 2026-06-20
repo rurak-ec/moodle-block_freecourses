@@ -18,7 +18,7 @@
  * Capabilities for block_freecourses.
  *
  * @package    block_freecourses
- * @copyright  2026
+ * @copyright  2026 Rurak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

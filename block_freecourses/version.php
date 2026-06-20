@@ -18,12 +18,15 @@
  * Version details for the Free courses block.
  *
  * @package    block_freecourses
- * @copyright  2026
+ * @copyright  2026 Rurak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026032010;
-$plugin->requires  = 2025092600;
-$plugin->component = 'block_freecourses';
+$plugin->version   = 2026062000;          // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2025041400;          // Requires Moodle 5.0 (2025041400) or later.
+$plugin->supported = [500, 502];          // Supported from Moodle 5.0 to 5.2.
+$plugin->component = 'block_freecourses'; // Full name of the plugin (used for diagnostics).
+$plugin->release   = '1.0.0';
+$plugin->maturity  = MATURITY_STABLE;

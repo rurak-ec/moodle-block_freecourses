@@ -1,10 +1,29 @@
-# Artifacts
-build/
+# Artifacts (repo-root only; do NOT ignore the plugin's amd/build/)
+/build/
+*.zip
+*.tar.gz
 
 # Local generation inputs/archives (not needed to keep developing the plugin)
-reference/
+/reference/
 workspace/_archive/
 workspace/*.bak.*
+workspace/block_freecourses.bak.*
 workspace/myoverview.bak.*
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Node / build tooling
+node_modules/
+vendor/
+
+# Logs and OS files
 *.log
 .DS_Store
+Thumbs.db

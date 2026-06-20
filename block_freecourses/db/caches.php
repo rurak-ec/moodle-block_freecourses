@@ -15,20 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cadenas de idioma para block_freecourses.
+ * Cache definitions for block_freecourses.
  *
  * @package    block_freecourses
- * @copyright  2026
+ * @copyright  2026 Rurak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Cursos Gratuitos';
-$string['freecourses:myaddinstance'] = 'Agregar un nuevo bloque Cursos Gratuitos al Tablero';
-$string['searchcourses'] = 'Buscar cursos';
-$string['allcategories'] = 'Todos';
-$string['filterbycategory'] = 'Filtrar por categoría';
-$string['aria:categorydropdown'] = 'Menú desplegable para filtrar por categoría';
-$string['enrolcourse'] = 'Inscribirse al Curso';
-$string['nofreecourses'] = 'No hay cursos gratuitos disponibles en este momento.';
-$string['nosearchresults'] = 'No se encontraron cursos con ese texto.';
-$string['privacy:metadata'] = 'El plugin block_freecourses no almacena datos personales.';
+defined('MOODLE_INTERNAL') || die();
+
+$definitions = [
+    // The site-wide list of courses that are open for free self-enrolment.
+    // This is user-independent (whether a course is "free" does not depend on
+    // who is looking), so it is shared across all users via an application cache
+    // with a short TTL; per-user "already enrolled" filtering happens at render time.
+    'candidates' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => false,
+        'ttl' => 300,
+    ],
+];

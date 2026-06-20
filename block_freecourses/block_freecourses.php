@@ -18,17 +18,14 @@
  * Main class for the Free courses block.
  *
  * @package    block_freecourses
- * @copyright  2026
+ * @copyright  2026 Rurak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Free courses block class.
  */
 class block_freecourses extends block_base {
-
     /**
      * Initialise block title.
      */
@@ -52,6 +49,9 @@ class block_freecourses extends block_base {
         $this->content = new stdClass();
         $this->content->text = $renderer->render($renderable);
         $this->content->footer = '';
+
+        // Deliver the search/filter behaviour as an AMD module (no inline JavaScript).
+        $this->page->requires->js_call_amd('block_freecourses/search', 'init', [$renderable->get_uniqid()]);
 
         return $this->content;
     }

@@ -1,54 +1,76 @@
-# moodle-free_courses
+# Free courses block (block_freecourses)
 
-Repositorio de desarrollo para el bloque de Moodle **`block_freecourses`**.
+A Moodle dashboard block that lists the courses a user can join **for free** — those with an open,
+key-less **self-enrolment** method — with a live search box and a category filter.
 
-## Objetivo funcional
+- **Component:** `block_freecourses`
+- **Supported Moodle:** 5.0 – 5.2
+- **License:** GNU GPL v3 or later
+- **Issues:** <https://github.com/rurak-ec/moodle-free_courses/issues>
 
-El bloque muestra únicamente cursos de libre acceso con autoinscripción `self` abierta, sin clave ni barreras adicionales, en una UI mínima:
-- barra de búsqueda
-- tarjetas fijas
-- botón **Inscribirse al Curso**
+> Development repository. The installable plugin lives in
+> [`workspace/block_freecourses`](workspace/block_freecourses) (the canonical source) and is mirrored
+> at the repository root in [`block_freecourses`](block_freecourses). See the
+> [plugin README](workspace/block_freecourses/README.md) for full details.
 
-## Estado del proyecto
+---
 
-| Campo | Valor |
-|-------|-------|
-| Componente técnico | `block_freecourses` |
-| Directorio plugin (raíz) | `block_freecourses/` |
-| Directorio plugin (workspace) | `workspace/block_freecourses/` |
-| Moodle requerido | 5.1+ (`2025092600`) |
-| Versión del plugin | `2026031901` |
+## English
 
-## Estructura del repositorio
+### What it does
+The block shows, as course cards on the Dashboard, every **visible** course that has an **enabled
+self-enrolment** instance which is fully open — no enrolment key, no group key, no cohort
+restriction, no enrolment dates, no capacity limit, and new enrolments allowed. Courses the user is
+already enrolled in are excluded. Each card links to the course's enrolment page ("Enrol").
 
-```
-moodle-free_courses/
-├── block_freecourses/          # Plugin listo para empaquetar/instalar
-├── workspace/block_freecourses/# Copia de trabajo en workspace
-├── scripts/                    # Utilidades de empaquetado y verificación
-├── docs/                       # Documentación técnica
-└── build/                      # ZIPs generados
-```
+Users can search the listed courses (accent- and case-insensitive) and filter them by category.
 
-## Quick start
+### Highlights for site administrators
+- Appears on the **Dashboard** only.
+- Stores **no personal data** (Privacy API `null_provider`).
+- The expensive "which courses are free" scan is **cached site-wide** (short TTL), so adding the
+  block does not scan every course on every page load.
 
-```bash
-cd /opt/moodle-dev/moodle-free_courses
+### Installation
+1. Build the ZIP: `./scripts/package_workspace.sh`
+2. Install it via **Site administration → Plugins → Install plugins**, or unzip into
+   `blocks/freecourses` and run the upgrade.
 
-# Validar workspace
-./scripts/verify_isolation.sh
+### Quality
+CI runs `moodle-plugin-ci` (phpcs, phpdoc, mustache, grunt, PHPUnit, Behat) across PHP 8.2–8.4 and
+Moodle 5.0/5.1/5.2 on PostgreSQL and MariaDB.
 
-# Empaquetar ZIP instalable
-./scripts/package_workspace.sh
-```
+### Languages
+The plugin ships **English only**, per the plugins-directory policy. The Spanish translation is kept
+under [`/translations`](translations/) and will be contributed to lang.moodle.org (AMOS) after
+approval.
 
-## Instalación en Moodle (ZIP)
+---
 
-1. Ejecutar `./scripts/package_workspace.sh`
-2. Extraer el ZIP generado en el directorio `blocks/` de Moodle
-3. Ejecutar upgrade/purge cache en Moodle
+## Español
 
-## Documentación
+### Qué hace
+El bloque muestra, como tarjetas de curso en el Tablero, todos los cursos **visibles** que tienen una
+instancia de **autoinscripción habilitada** y totalmente abierta: sin clave de inscripción, sin clave
+de grupo, sin restricción por cohorte, sin fechas de inscripción, sin límite de aforo y con nuevas
+inscripciones permitidas. Se excluyen los cursos en los que el usuario ya está inscrito. Cada tarjeta
+enlaza a la página de inscripción del curso ("Inscribirse").
 
-- [PLUGIN_MAP.md](docs/PLUGIN_MAP.md) — Mapa técnico
-- [WORKFLOW.md](docs/WORKFLOW.md) — Flujo de desarrollo
+Las personas usuarias pueden buscar entre los cursos listados (sin distinguir mayúsculas ni acentos) y
+filtrarlos por categoría.
+
+### Aspectos para administradores
+- Aparece únicamente en el **Tablero (Dashboard)**.
+- **No almacena datos personales** (API de Privacidad `null_provider`).
+- El escaneo costoso de "qué cursos son gratis" se **cachea a nivel de sitio** (TTL corto), de modo
+  que el bloque no recorre todos los cursos en cada carga de página.
+
+### Instalación
+1. Generar el ZIP: `./scripts/package_workspace.sh`
+2. Instalarlo desde **Administración del sitio → Plugins → Instalar plugins**, o descomprimir en
+   `blocks/freecourses` y ejecutar la actualización.
+
+### Idiomas
+El plugin se publica **solo en inglés**, según la política del directorio de plugins. La traducción al
+español se conserva en [`/translations`](translations/) y se subirá a lang.moodle.org (AMOS) tras la
+aprobación.

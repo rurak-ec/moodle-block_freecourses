@@ -18,19 +18,16 @@
  * Privacy provider for block_freecourses.
  *
  * @package    block_freecourses
- * @copyright  2026
+ * @copyright  2026 Rurak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace block_freecourses\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy subsystem provider.
  */
 class provider implements \core_privacy\local\metadata\null_provider {
-
     /**
      * Explain why no personal data is stored.
      *

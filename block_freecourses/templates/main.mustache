@@ -81,113 +81,21 @@
                     {{/showcoursecategory}}
                 {{/coursecategory}}
                 {{$progress}}
-                    <div class="card-footer border-0 bg-white w-100 pt-0">
+                    <div class="card-footer border-0 bg-transparent w-100 pt-0">
                         <a href="{{enrolurl}}" class="btn btn-primary w-100">{{#str}}enrolcourse, block_freecourses{{/str}}</a>
                     </div>
                 {{/progress}}
             {{/ core_course/coursecards }}
         </div>
 
-        <div class="text-xs-center text-center mt-3 d-none" data-region="freecourses-noresults" role="status">
-            <p class="text-muted mt-3 mb-0">{{#str}}nocourses, core{{/str}}</p>
+        <div class="text-center mt-3 d-none" data-region="freecourses-noresults" role="status" aria-live="polite">
+            <p class="text-muted mt-3 mb-0">{{#str}}nosearchresults, block_freecourses{{/str}}</p>
         </div>
     {{/hascourses}}
 
     {{^hascourses}}
-        <div class="text-xs-center text-center mt-3" role="status">
-            <p class="text-muted mt-3 mb-0">{{#str}}nocourses, core{{/str}}</p>
+        <div class="text-center mt-3" role="status" aria-live="polite">
+            <p class="text-muted mt-3 mb-0">{{#str}}nofreecourses, block_freecourses{{/str}}</p>
         </div>
     {{/hascourses}}
 </div>
-{{#js}}
-require(['core/utils'], function(Utils) {
-    var root = document.getElementById('block-freecourses-{{uniqid}}');
-    if (!root) {
-        return;
-    }
-
-    var input = root.querySelector('[data-region="freecourses-search"] [data-action="search"]');
-    var clearicon = root.querySelector('[data-region="freecourses-search"] [data-action="clearsearch"]');
-    var cardswrapper = root.querySelector('[data-region="freecourses-cards-wrapper"]');
-    var noresults = root.querySelector('[data-region="freecourses-noresults"]');
-
-    if (!input || !clearicon || !cardswrapper || !noresults) {
-        return;
-    }
-
-    var getcards = function() {
-        var cards = root.querySelectorAll('[data-region="card-deck"] [data-region="course-content"]');
-        if (!cards.length) {
-            cards = root.querySelectorAll('[data-region="card-deck"] .course-card');
-        }
-
-        return Array.prototype.map.call(cards, function(card) {
-            return card.closest('.col') || card;
-        });
-    };
-
-    var normalise = function(value) {
-        var text = (value || '').toString().toLowerCase().trim();
-        if (typeof text.normalize === 'function') {
-            text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        }
-        return text;
-    };
-
-    var showallcards = function() {
-        var cards = getcards();
-        cards.forEach(function(card) {
-            card.classList.remove('d-none');
-        });
-        cardswrapper.classList.remove('d-none');
-        noresults.classList.add('d-none');
-    };
-
-    var filtercards = function(term) {
-        var cards = getcards();
-        var searchterm = normalise(term);
-        var visiblecount = 0;
-
-        cards.forEach(function(card) {
-            var titleelement = card.querySelector('.coursename');
-            var title = normalise(titleelement ? titleelement.textContent : '');
-            var visible = !searchterm || title.indexOf(searchterm) !== -1;
-            card.classList.toggle('d-none', !visible);
-            if (visible) {
-                visiblecount++;
-            }
-        });
-
-        var empty = visiblecount === 0;
-        cardswrapper.classList.toggle('d-none', empty);
-        noresults.classList.toggle('d-none', !empty);
-    };
-
-    var clearsearch = function() {
-        clearicon.classList.add('d-none');
-        showallcards();
-    };
-
-    var activesearch = function() {
-        clearicon.classList.remove('d-none');
-    };
-
-    clearicon.addEventListener('click', function(e) {
-        e.preventDefault();
-        input.value = '';
-        input.focus();
-        clearsearch();
-    });
-
-    input.addEventListener('input', Utils.debounce(function() {
-        var value = input.value.trim();
-        if (value === '') {
-            clearsearch();
-            return;
-        }
-
-        activesearch();
-        filtercards(value);
-    }, 1000));
-});
-{{/js}}
