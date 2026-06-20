@@ -18,6 +18,28 @@
     @template block_freecourses/main
 
     Render the free courses block.
+
+    Context variables required for this template:
+    * uniqid - Unique id for this block instance.
+    * hascourses - Whether there is at least one free course to show.
+    * showcategoryfilter - Whether to show the category filter control.
+    * selectedcategoryname - Label of the currently selected category.
+    * allcategoriesurl - URL that clears the category filter.
+    * allcategoriesactive - Whether no category filter is applied.
+    * hascategoryoptions - Whether there are category options to list.
+    * categoryoptions - Array of { url, active, name } category links.
+
+    Example context (json):
+    {
+        "uniqid": "abc123",
+        "hascourses": false,
+        "showcategoryfilter": false,
+        "selectedcategoryname": "All categories",
+        "allcategoriesurl": "#",
+        "allcategoriesactive": true,
+        "hascategoryoptions": false,
+        "categoryoptions": []
+    }
 }}
 
 <div id="block-freecourses-{{uniqid}}" class="block_freecourses" data-region="freecourses">
