@@ -34,4 +34,4 @@ First public release prepared for the Moodle plugins directory.
   previously Spanish). The Spanish translation is kept under [`/translations`](translations/) and
   will be contributed to lang.moodle.org (AMOS) after approval, per the plugins-directory policy.
 
-[1.0.0]: https://github.com/rurak-ec/moodle-free_courses/releases/tag/v1.0.0
+[1.0.0]: https://github.com/rurak-ec/moodle-block_freecourses/releases/tag/v1.0.0

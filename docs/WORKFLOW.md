@@ -3,7 +3,7 @@
 ## 1) Validar estructura del workspace
 
 ```bash
-cd /opt/moodle-dev/moodle-free_courses
+cd /opt/moodle-dev/custom-plugins/moodle-block_freecourses
 ./scripts/verify_isolation.sh
 ```
 

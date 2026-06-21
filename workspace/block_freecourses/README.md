@@ -9,6 +9,9 @@ filtering. Designed for the user **Dashboard**.
 - **Maturity:** Stable · **Release:** 1.0.0
 - **License:** GNU GPL v3 or later
 
+> Targets Moodle 5.0+ because the category dropdown uses Bootstrap 5 markup (Moodle 4.5 ships Bootstrap 4).
+> Apunta a Moodle 5.0+ porque el menú de categorías usa marcado de Bootstrap 5 (Moodle 4.5 incluye Bootstrap 4).
+
 ---
 
 ## English

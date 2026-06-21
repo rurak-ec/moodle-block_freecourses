@@ -31,5 +31,5 @@ moodle-plugin-ci behat --profile chrome
 
 ## Reporting issues
 Please use the GitHub issue tracker:
-<https://github.com/rurak-ec/moodle-free_courses/issues>.
+<https://github.com/rurak-ec/moodle-block_freecourses/issues>.
 Include your Moodle version, PHP version, and steps to reproduce.

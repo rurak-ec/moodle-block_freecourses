@@ -6,7 +6,10 @@ key-less **self-enrolment** method — with a live search box and a category fil
 - **Component:** `block_freecourses`
 - **Supported Moodle:** 5.0 – 5.2
 - **License:** GNU GPL v3 or later
-- **Issues:** <https://github.com/rurak-ec/moodle-free_courses/issues>
+
+> Targets Moodle 5.0+ because the category dropdown uses Bootstrap 5 markup (Moodle 4.5 ships Bootstrap 4).
+> Apunta a Moodle 5.0+ porque el menú de categorías usa marcado de Bootstrap 5 (Moodle 4.5 incluye Bootstrap 4).
+- **Issues:** <https://github.com/rurak-ec/moodle-block_freecourses/issues>
 
 > Development repository. The installable plugin lives in
 > [`workspace/block_freecourses`](workspace/block_freecourses) (the canonical source) and is mirrored
