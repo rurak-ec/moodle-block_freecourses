@@ -1,25 +1,36 @@
 /* Free courses block.
  *
  * Colours come from the active theme (Bootstrap variables), so the block adapts to light and
- * dark modes. Selectors are specific enough to override Bootstrap defaults without !important.
+ * dark modes. Selectors stay scoped to this block to avoid affecting other Dashboard blocks.
  */
 
 .block.block_freecourses {
+    /* Zero the outer card padding so the title/content sit flush-left,
+       matching Space5's own block_myoverview override in _blocks.scss. */
+    padding: 0;
     border: 0;
     box-shadow: none;
     background: transparent;
 }
 
-.block.block_freecourses > .card-body {
-    padding: 0;
+/*
+ * Space5 may place the card body below its block-hider wrapper while editing.
+ * Apply the same flush header treatment in either DOM shape so this title
+ * aligns with the Dashboard's Course overview title.
+ */
+.block.block_freecourses > .card-body,
+.block.block_freecourses > .block-hider-hide > .card-body {
+    padding: 0 !important;
     background: transparent;
 }
 
-.block.block_freecourses > .card-body > .card-text {
+.block.block_freecourses > .card-body > .card-text,
+.block.block_freecourses > .block-hider-hide > .card-body > .card-text {
     margin-top: 0;
 }
 
-.block.block_freecourses > .card-body > .card-title {
+.block.block_freecourses > .card-body > .card-title,
+.block.block_freecourses > .block-hider-hide > .card-body > .card-title {
     font-size: 1.125rem;
     font-weight: 700;
     margin-bottom: 0.75rem;
