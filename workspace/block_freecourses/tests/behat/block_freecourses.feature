@@ -41,6 +41,15 @@ Feature: Free courses block on the Dashboard
     Then I should see "Beta free course" in the "Free courses" "block"
     And I should not see "Alpha free course" in the "Free courses" "block"
 
+  Scenario: Enrolling from the block lands the user inside the course
+    Given I log in as "student1"
+    And I turn editing mode on
+    And I add the "Free courses" block
+    When I click on "Enrol" "button" in the "//div[@data-region='course-content'][contains(normalize-space(.), 'Alpha free course')]" "xpath_element"
+    Then the url should match "/course/view\.php\?id=[0-9]+"
+    And I should see "You are enrolled in the course."
+    And I should see "Alpha free course" in the "page-header" "region"
+
   Scenario: The search box filters the listed courses
     Given I log in as "student1"
     And I turn editing mode on

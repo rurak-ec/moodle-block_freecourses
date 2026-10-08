@@ -45,22 +45,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Moodle 5.0/5.1 run on PHP 8.2+; Moodle 5.2 dropped PHP 8.2 (requires 8.3+).
+        # Every supported branch (4.5, 5.0, 5.1, 5.2) at its lowest and highest PHP, on both databases.
+        # Moodle 4.5 runs on PHP 8.1–8.3; 5.0/5.1 on PHP 8.2–8.4; 5.2 dropped PHP 8.2 (requires 8.3+).
         include:
+          - php: '8.1'
+            moodle-branch: 'MOODLE_405_STABLE'
+            database: 'pgsql'
+          - php: '8.3'
+            moodle-branch: 'MOODLE_405_STABLE'
+            database: 'mariadb'
           - php: '8.2'
             moodle-branch: 'MOODLE_500_STABLE'
             database: 'pgsql'
+          - php: '8.4'
+            moodle-branch: 'MOODLE_500_STABLE'
+            database: 'mariadb'
           - php: '8.2'
             moodle-branch: 'MOODLE_501_STABLE'
             database: 'pgsql'
+          - php: '8.4'
+            moodle-branch: 'MOODLE_501_STABLE'
+            database: 'mariadb'
           - php: '8.3'
             moodle-branch: 'MOODLE_502_STABLE'
             database: 'pgsql'
           - php: '8.4'
             moodle-branch: 'MOODLE_502_STABLE'
+            database: 'mariadb'
+          - php: '8.3'
+            moodle-branch: 'MOODLE_503_STABLE'
             database: 'pgsql'
           - php: '8.4'
-            moodle-branch: 'MOODLE_502_STABLE'
+            moodle-branch: 'MOODLE_503_STABLE'
             database: 'mariadb'
           - php: '8.4'
             moodle-branch: 'main'

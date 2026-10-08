@@ -209,6 +209,67 @@ final class main_test extends \advanced_testcase {
     }
 
     /**
+     * The enrol button posts to the block's own endpoint, with the sesskey in the form (not the URL).
+     */
+    public function test_enrol_url_targets_block_endpoint(): void {
+        $this->resetAfterTest();
+        $this->enable_self_enrolment();
+
+        $course = $this->create_course_with_self_enrol();
+        $user = $this->getDataGenerator()->create_user();
+
+        $context = $this->export_as($user);
+        $cards = array_values(array_filter($context['courses'], static fn($card) => (int) $card['id'] === (int) $course->id));
+        $this->assertCount(1, $cards);
+
+        $url = new \moodle_url($cards[0]['enrolurl']);
+        $this->assertStringEndsWith('/blocks/freecourses/enrol.php', $url->get_path());
+        $this->assertEquals($course->id, $url->param('id'));
+        $this->assertNull($url->param('sesskey'));
+        $this->assertSame(sesskey(), $context['sesskey']);
+    }
+
+    /**
+     * Bootstrap-dependent markup follows the running Moodle branch (BS4 on 4.5, BS5 on 5.0+).
+     *
+     * @dataProvider branch_provider
+     * @param string $branch The Moodle branch to simulate.
+     * @param array $expected The expected markup values.
+     */
+    public function test_bootstrap_markup_follows_branch(string $branch, array $expected): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->branch = $branch;
+
+        $this->assertSame($expected, main::get_bootstrap_markup());
+    }
+
+    /**
+     * Data provider with every supported Moodle branch.
+     *
+     * @return array<string, array{0: string, 1: array}>
+     */
+    public static function branch_provider(): array {
+        $bs4 = [
+            'srclass' => 'sr-only',
+            'dropdowntoggleattr' => 'data-toggle',
+            'dropdownmenuendclass' => 'dropdown-menu-right',
+        ];
+        $bs5 = [
+            'srclass' => 'visually-hidden',
+            'dropdowntoggleattr' => 'data-bs-toggle',
+            'dropdownmenuendclass' => 'dropdown-menu-end',
+        ];
+        return [
+            'Moodle 4.5' => ['405', $bs4],
+            'Moodle 5.0' => ['500', $bs5],
+            'Moodle 5.1' => ['501', $bs5],
+            'Moodle 5.2' => ['502', $bs5],
+        ];
+    }
+
+    /**
      * With no free courses the block reports an empty state.
      */
     public function test_empty_state(): void {

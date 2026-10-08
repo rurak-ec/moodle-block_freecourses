@@ -24,9 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026062000;          // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2025041400;          // Requires Moodle 5.0 (2025041400) or later.
-$plugin->supported = [500, 502];          // Supported from Moodle 5.0 to 5.2.
+$plugin->version   = 2026100801;          // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2024100700;          // Requires Moodle 4.5 (2024100700) or later.
+$plugin->supported = [405, 503];          // Supported from Moodle 4.5 to 5.3.
 $plugin->component = 'block_freecourses'; // Full name of the plugin (used for diagnostics).
-$plugin->release   = '1.0.0';
+$plugin->release   = '1.1.2';
 $plugin->maturity  = MATURITY_STABLE;

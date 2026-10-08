@@ -24,6 +24,7 @@
 
 namespace block_freecourses\output;
 
+use block_freecourses\local\enrolment;
 use cache;
 use moodle_url;
 use renderable;
@@ -40,6 +41,9 @@ class main implements renderable, templatable {
 
     /** @var string Unique id shared between the rendered template and the AMD module. */
     private string $uniqid;
+
+    /** @var bool Whether this renderable has courses to display. */
+    private bool $hascourses = false;
 
     /**
      * Constructor.
@@ -58,6 +62,15 @@ class main implements renderable, templatable {
     }
 
     /**
+     * Check if this block instance has free courses to display.
+     *
+     * @return bool
+     */
+    public function has_courses(): bool {
+        return $this->hascourses;
+    }
+
+    /**
      * Export template context.
      *
      * @param renderer_base $output
@@ -66,10 +79,12 @@ class main implements renderable, templatable {
     public function export_for_template(renderer_base $output): array {
         $selectedcategoryid = optional_param(self::CATEGORYPARAM, 0, PARAM_INT);
         $coursecontext = $this->get_free_courses($output, $selectedcategoryid);
+        $this->hascourses = !empty($coursecontext['courses']);
 
-        return [
+        return array_merge([
             'uniqid' => $this->uniqid,
-            'hascourses' => !empty($coursecontext['courses']),
+            'sesskey' => sesskey(),
+            'hascourses' => $this->hascourses,
             'courses' => $coursecontext['courses'],
             'showcategoryfilter' => !empty($coursecontext['categoryoptions']),
             'selectedcategoryname' => $coursecontext['selectedcategoryname'],
@@ -77,6 +92,25 @@ class main implements renderable, templatable {
             'allcategoriesactive' => empty($coursecontext['selectedcategoryid']),
             'hascategoryoptions' => !empty($coursecontext['categoryoptions']),
             'categoryoptions' => $coursecontext['categoryoptions'],
+        ], self::get_bootstrap_markup());
+    }
+
+    /**
+     * Markup that differs between Bootstrap 4 (Moodle 4.5) and Bootstrap 5 (Moodle 5.0+).
+     *
+     * Moodle 4.5 only bridges the BS5 spacing/float/text utilities, while Moodle 5.x deprecates the
+     * BS4 names, so these three must follow the running Moodle branch.
+     *
+     * @return array<string, string>
+     */
+    public static function get_bootstrap_markup(): array {
+        global $CFG;
+
+        $bs5 = (int)$CFG->branch >= 500;
+        return [
+            'srclass' => $bs5 ? 'visually-hidden' : 'sr-only',
+            'dropdowntoggleattr' => $bs5 ? 'data-bs-toggle' : 'data-toggle',
+            'dropdownmenuendclass' => $bs5 ? 'dropdown-menu-end' : 'dropdown-menu-right',
         ];
     }
 
@@ -106,6 +140,7 @@ class main implements renderable, templatable {
 
         $cards = [];
         $categories = [];
+        $categorynamecache = [];
         foreach ($candidates as $candidate) {
             $context = \context_course::instance($candidate->id, IGNORE_MISSING);
             if (!$context) {
@@ -122,18 +157,17 @@ class main implements renderable, templatable {
 
             $fullname = format_string($candidate->fullname, true, ['context' => $context]);
             $categoryid = (int)$candidate->category;
-            $coursecategory = $this->get_course_category_name($categoryid);
 
-            $course = (object)[
-                'id' => $candidate->id,
-                'fullname' => $candidate->fullname,
-                'shortname' => $candidate->shortname,
-                'category' => $candidate->category,
-            ];
-            $courseimage = \core_course\external\course_summary_exporter::get_course_image($course);
-            if (!$courseimage) {
-                $courseimage = $output->get_generated_image_for_id($candidate->id);
+            // Memoize category formatting to avoid redundant category fetches across courses.
+            if (!isset($categorynamecache[$categoryid])) {
+                $categorynamecache[$categoryid] = $this->get_course_category_name($categoryid);
             }
+            $coursecategory = $categorynamecache[$categoryid];
+
+            // Use pre-computed course image if cached, or fallback to generated theme image.
+            $courseimage = !empty($candidate->courseimage)
+                ? $candidate->courseimage
+                : $output->get_generated_image_for_id($candidate->id);
 
             if (!empty($coursecategory) && !array_key_exists($categoryid, $categories)) {
                 $categories[$categoryid] = $coursecategory;
@@ -141,15 +175,12 @@ class main implements renderable, templatable {
 
             $cards[] = [
                 'id' => (int)$candidate->id,
-                'uniqid' => uniqid(),
+                'uniqid' => $this->uniqid . '-c' . $candidate->id,
                 'fullname' => $fullname,
                 'categoryid' => $categoryid,
                 'viewurl' => (new moodle_url('/course/view.php', ['id' => $candidate->id]))->out(false),
-                'enrolurl' => (new moodle_url('/enrol/index.php', [
-                    'id' => $candidate->id,
-                    'action' => 'enrol',
-                    'sesskey' => sesskey(),
-                ]))->out(false),
+                // Posted (with sesskey) to our own endpoint, which enrols and then lands the user in the course.
+                'enrolurl' => (new moodle_url('/blocks/freecourses/enrol.php', ['id' => $candidate->id]))->out(false),
                 'courseimage' => $courseimage,
                 'coursecategory' => $coursecategory,
                 'showcoursecategory' => !empty($coursecategory),
@@ -209,10 +240,12 @@ class main implements renderable, templatable {
     /**
      * Scan the site for courses open for free self-enrolment (user-independent).
      *
+     * Uses a single indexed SQL JOIN query instead of N+1 individual instance queries.
+     *
      * @return array<int, stdClass>
      */
     private function build_candidate_courses(): array {
-        global $CFG;
+        global $DB, $CFG;
 
         require_once($CFG->libdir . '/enrollib.php');
 
@@ -220,28 +253,73 @@ class main implements renderable, templatable {
             return [];
         }
 
-        // Use the core API that already applies standard Moodle course visibility checks.
-        $courses = get_courses('all', 'c.sortorder ASC', 'c.id, c.fullname, c.shortname, c.category, c.visible');
-        if (!$courses) {
+        // Single indexed query joining course and enrol tables.
+        // Replaces get_courses() + N calls to enrol_get_instances().
+        $sql = "SELECT c.id, c.fullname, c.shortname, c.category, c.visible,
+                       e.id AS enrolid, e.enrol, e.status AS enrolstatus, e.password,
+                       e.customint1, e.customint2, e.customint3, e.customint4, e.customint5, e.customint6,
+                       e.enrolstartdate, e.enrolenddate, e.sortorder AS enrolsortorder
+                  FROM {course} c
+                  JOIN {enrol} e ON e.courseid = c.id
+                 WHERE c.id != :siteid
+                   AND c.visible = 1
+                   AND e.enrol = 'self'
+                   AND e.status = :enrolstatus
+                 ORDER BY c.sortorder ASC, e.sortorder ASC";
+
+        $records = $DB->get_records_sql($sql, [
+            'siteid' => SITEID,
+            'enrolstatus' => ENROL_INSTANCE_ENABLED,
+        ]);
+
+        if (!$records) {
             return [];
         }
 
         $candidates = [];
-        foreach ($courses as $course) {
-            if ((int)$course->id === SITEID || (int)$course->visible !== 1) {
+        $seen = [];
+        foreach ($records as $rec) {
+            if (isset($seen[$rec->id])) {
                 continue;
             }
 
-            $instance = $this->get_open_self_enrol_instance($course);
-            if (!$instance) {
+            $instance = (object)[
+                'id' => (int)$rec->enrolid,
+                'courseid' => (int)$rec->id,
+                'enrol' => $rec->enrol,
+                'status' => (int)$rec->enrolstatus,
+                'password' => $rec->password,
+                'customint1' => $rec->customint1,
+                'customint2' => $rec->customint2,
+                'customint3' => $rec->customint3,
+                'customint4' => $rec->customint4,
+                'customint5' => $rec->customint5,
+                'customint6' => $rec->customint6,
+                'enrolstartdate' => $rec->enrolstartdate,
+                'enrolenddate' => $rec->enrolenddate,
+            ];
+
+            if (!enrolment::is_open_instance($instance)) {
                 continue;
             }
+
+            $seen[$rec->id] = true;
+
+            // Pre-resolve course image once so it is saved in MUC and shared across users.
+            $courseobj = (object)[
+                'id' => (int)$rec->id,
+                'fullname' => $rec->fullname,
+                'shortname' => $rec->shortname,
+                'category' => (int)$rec->category,
+            ];
+            $courseimage = \core_course\external\course_summary_exporter::get_course_image($courseobj) ?: '';
 
             $candidates[] = (object)[
-                'id' => (int)$course->id,
-                'fullname' => $course->fullname,
-                'shortname' => $course->shortname,
-                'category' => (int)$course->category,
+                'id' => (int)$rec->id,
+                'fullname' => $rec->fullname,
+                'shortname' => $rec->shortname,
+                'category' => (int)$rec->category,
+                'courseimage' => $courseimage,
                 'enrol' => $instance,
             ];
         }
@@ -297,70 +375,5 @@ class main implements renderable, templatable {
         } catch (\Throwable $e) {
             return '';
         }
-    }
-
-    /**
-     * Find an enabled self-enrol instance that is fully open (no barriers).
-     *
-     * @param stdClass $course
-     * @return stdClass|null
-     */
-    private function get_open_self_enrol_instance(stdClass $course): ?stdClass {
-        $instances = enrol_get_instances($course->id, true);
-        foreach ($instances as $instance) {
-            if ($instance->enrol !== 'self') {
-                continue;
-            }
-
-            if ((int)$instance->status !== ENROL_INSTANCE_ENABLED) {
-                continue;
-            }
-
-            if ($this->is_open_self_enrol_instance($instance)) {
-                return $instance;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Validate self-enrol instance conditions for free, open access.
-     *
-     * @param stdClass $instance
-     * @return bool
-     */
-    private function is_open_self_enrol_instance(stdClass $instance): bool {
-        // An enrolment key (password) is required: not freely open.
-        if (!empty($instance->password)) {
-            return false;
-        }
-
-        // A group enrolment key is required.
-        if (!empty($instance->customint1)) {
-            return false;
-        }
-
-        // Restricted to members of a cohort.
-        if (!empty($instance->customint5)) {
-            return false;
-        }
-
-        // Restricted to a date window.
-        if (!empty($instance->enrolstartdate) || !empty($instance->enrolenddate)) {
-            return false;
-        }
-
-        // Limited to a maximum number of enrolled users.
-        if (!empty($instance->customint3)) {
-            return false;
-        }
-
-        // New self-enrolments are not allowed on this instance.
-        if (empty($instance->customint6)) {
-            return false;
-        }
-
-        return true;
     }
 }

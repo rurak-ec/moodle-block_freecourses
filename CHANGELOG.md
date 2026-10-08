@@ -4,6 +4,44 @@ All notable changes to **block_freecourses** (Free courses) are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-10-08
+
+### Added
+- Support for **Moodle 5.3 (LTS)** (`$plugin->supported = [405, 503]`).
+- CI matrix covering `MOODLE_503_STABLE` on PHP 8.3 (pgsql) and PHP 8.4 (mariadb).
+- High-performance CSS containment (`contain: layout style;`, `content-visibility: auto;`) and `touch-action: manipulation;` for fluid 60fps scrolling and instant touch response.
+- In-memory category formatting memoization map.
+
+### Changed & Optimized
+- **Zero-impact Dashboard loading**: Replaced $O(N)$ candidate queries (`get_courses()` + $N \times$ `enrol_get_instances()`) with a single indexed SQL JOIN query between `{course}` and `{enrol}`.
+- Pre-computed course images during MUC candidate caching, completely avoiding filesystem/storage calls on user dashboard visits.
+- Conditional AMD module loading: `block_freecourses/search` is only loaded and initialized when the user actually has courses to display and filter.
+
+## [1.1.0] - 2026-10-05
+
+### Added
+- Support for **Moodle 4.5**. The plugin now supports Moodle 4.5, 5.0, 5.1 and 5.2
+  (`$plugin->supported = [405, 502]`).
+- One-click enrolment endpoint `blocks/freecourses/enrol.php` and the shared helper
+  `\block_freecourses\local\enrolment`.
+- PHPUnit tests for the enrolment helper and for the per-branch markup. A Behat scenario checks that
+  enrolling lands the user in the course.
+- CI matrix covering `MOODLE_405_STABLE`, `MOODLE_500_STABLE`, `MOODLE_501_STABLE` and
+  `MOODLE_502_STABLE`, each on its lowest and highest supported PHP.
+
+### Changed
+- The **Enrol** button is now a POST form (sesskey in the body, no longer in the URL). After enrolling,
+  it lands the user **inside the course**.
+- Bootstrap-dependent markup (`sr-only`/`visually-hidden`, `data-toggle`/`data-bs-toggle`,
+  `dropdown-menu-right`/`dropdown-menu-end`) is chosen from the running Moodle branch.
+
+### Fixed
+- Clicking **Enrol** sent the user back to the Dashboard instead of into the course when they had
+  signed in with OAuth2 (e.g. Google). Core's enrolment page redirects to `$SESSION->wantsurl`, and
+  OAuth2 logins leave it pointing at `/my/`.
+- On Moodle 4.5, clicking **Enrol** only opened the enrolment page and required a second click.
+- If two open self-enrolment instances existed, a single click could enrol the user through both.
+
 ## [1.0.0] - 2026-06-20
 
 First public release prepared for the Moodle plugins directory.
@@ -34,4 +72,6 @@ First public release prepared for the Moodle plugins directory.
   previously Spanish). The Spanish translation is kept under [`/translations`](translations/) and
   will be contributed to lang.moodle.org (AMOS) after approval, per the plugins-directory policy.
 
+[1.1.2]: https://github.com/rurak-ec/moodle-block_freecourses/releases/tag/v1.1.2
+[1.1.0]: https://github.com/rurak-ec/moodle-block_freecourses/releases/tag/v1.1.0
 [1.0.0]: https://github.com/rurak-ec/moodle-block_freecourses/releases/tag/v1.0.0

@@ -21,24 +21,48 @@
 
     Context variables required for this template:
     * uniqid - Unique id for this block instance.
+    * sesskey - Session key posted with the enrol button.
     * hascourses - Whether there is at least one free course to show.
+    * courses - Array of course cards ({ id, fullname, viewurl, enrolurl, courseimage, coursecategory, ... }).
     * showcategoryfilter - Whether to show the category filter control.
     * selectedcategoryname - Label of the currently selected category.
     * allcategoriesurl - URL that clears the category filter.
     * allcategoriesactive - Whether no category filter is applied.
     * hascategoryoptions - Whether there are category options to list.
     * categoryoptions - Array of { url, active, name } category links.
+    * srclass - Screen-reader-only class (sr-only on Moodle 4.5, visually-hidden on 5.0+).
+    * dropdowntoggleattr - Dropdown toggle attribute (data-toggle on Moodle 4.5, data-bs-toggle on 5.0+).
+    * dropdownmenuendclass - End-aligned menu class (dropdown-menu-right on Moodle 4.5, dropdown-menu-end on 5.0+).
 
     Example context (json):
     {
         "uniqid": "abc123",
-        "hascourses": false,
-        "showcategoryfilter": false,
+        "sesskey": "AbCdEf1234",
+        "hascourses": true,
+        "courses": [
+            {
+                "id": 2,
+                "uniqid": "def456",
+                "fullname": "Course 1",
+                "viewurl": "https://moodlesite/course/view.php?id=2",
+                "enrolurl": "https://moodlesite/blocks/freecourses/enrol.php?id=2",
+                "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
+                "coursecategory": "Category 1",
+                "showcoursecategory": true,
+                "visible": true
+            }
+        ],
+        "showcategoryfilter": true,
         "selectedcategoryname": "All categories",
         "allcategoriesurl": "#",
         "allcategoriesactive": true,
-        "hascategoryoptions": false,
-        "categoryoptions": []
+        "hascategoryoptions": true,
+        "categoryoptions": [
+            {"url": "#", "active": false, "name": "Category 1"}
+        ],
+        "srclass": "visually-hidden",
+        "dropdowntoggleattr": "data-bs-toggle",
+        "dropdownmenuendclass": "dropdown-menu-end"
     }
 }}
 
@@ -54,13 +78,13 @@
 
             {{#showcategoryfilter}}
                 <div class="dropdown mb-1 freecourses-filter">
-                    <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
+                    <button id="freecourses-categorydropdown-{{uniqid}}" type="button" class="btn btn-sm btn-secondary dropdown-toggle" {{dropdowntoggleattr}}="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}}aria:categorydropdown, block_freecourses{{/str}}">
                         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.25 4.75H4.75L9.31174 10.4522C9.59544 10.8068 9.75 11.2474 9.75 11.7016V18.25C9.75 18.8023 10.1977 19.25 10.75 19.25H13.25C13.8023 19.25 14.25 18.8023 14.25 18.25V11.7016C14.25 11.2474 14.4046 10.8068 14.6883 10.4522L19.25 4.75Z"></path>
                         </svg>
                         <span class="d-sm-inline-block ms-2" data-active-item-text>{{selectedcategoryname}}</span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="freecourses-categorydropdown-{{uniqid}}">
+                    <ul class="dropdown-menu {{dropdownmenuendclass}}" role="menu" aria-labelledby="freecourses-categorydropdown-{{uniqid}}">
                         <li>
                             <a class="dropdown-item" href="{{{allcategoriesurl}}}" role="menuitem" {{#allcategoriesactive}}aria-current="true"{{/allcategoriesactive}}>
                                 {{#str}}allcategories, block_freecourses{{/str}}
@@ -88,7 +112,7 @@
                 {{$classes}}freecourses-carddeck{{/classes}}
                 {{$coursename}}
                     <span class="multiline" title="{{fullname}}">
-                        <span class="visually-hidden">{{{fullname}}}</span>
+                        <span class="{{srclass}}">{{{fullname}}}</span>
                         <span aria-hidden="true">
                             {{#shortentext}}55, {{{fullname}}}{{/shortentext}}
                         </span>
@@ -96,7 +120,7 @@
                 {{/coursename}}
                 {{$coursecategory}}
                     {{#showcoursecategory}}
-                        <span class="visually-hidden">
+                        <span class="{{srclass}}">
                             {{#str}}aria:coursecategory, core_course{{/str}}
                         </span>
                         <span class="categoryname text-truncate">{{{coursecategory}}}</span>
@@ -104,7 +128,10 @@
                 {{/coursecategory}}
                 {{$progress}}
                     <div class="card-footer border-0 bg-transparent w-100 pt-0">
-                        <a href="{{enrolurl}}" class="btn btn-primary w-100">{{#str}}enrolcourse, block_freecourses{{/str}}</a>
+                        <form method="post" action="{{enrolurl}}" class="m-0">
+                            <input type="hidden" name="sesskey" value="{{sesskey}}">
+                            <button type="submit" class="btn btn-primary w-100">{{#str}}enrolcourse, block_freecourses{{/str}}</button>
+                        </form>
                     </div>
                 {{/progress}}
             {{/ core_course/coursecards }}

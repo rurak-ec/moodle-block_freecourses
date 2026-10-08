@@ -4,11 +4,8 @@ A Moodle dashboard block that lists the courses a user can join **for free** —
 key-less **self-enrolment** method — with a live search box and a category filter.
 
 - **Component:** `block_freecourses`
-- **Supported Moodle:** 5.0 – 5.2
+- **Supported Moodle:** 4.5, 5.0, 5.1, 5.2, 5.3 (LTS)
 - **License:** GNU GPL v3 or later
-
-> Targets Moodle 5.0+ because the category dropdown uses Bootstrap 5 markup (Moodle 4.5 ships Bootstrap 4).
-> Apunta a Moodle 5.0+ porque el menú de categorías usa marcado de Bootstrap 5 (Moodle 4.5 incluye Bootstrap 4).
 - **Issues:** <https://github.com/rurak-ec/moodle-block_freecourses/issues>
 
 > Development repository. The installable plugin lives in
@@ -24,24 +21,27 @@ key-less **self-enrolment** method — with a live search box and a category fil
 The block shows, as course cards on the Dashboard, every **visible** course that has an **enabled
 self-enrolment** instance which is fully open — no enrolment key, no group key, no cohort
 restriction, no enrolment dates, no capacity limit, and new enrolments allowed. Courses the user is
-already enrolled in are excluded. Each card links to the course's enrolment page ("Enrol").
+already enrolled in are excluded. Each card's **Enrol** button enrols the user in one click and takes
+them straight into the course.
 
 Users can search the listed courses (accent- and case-insensitive) and filter them by category.
 
-### Highlights for site administrators
-- Appears on the **Dashboard** only.
-- Stores **no personal data** (Privacy API `null_provider`).
-- The expensive "which courses are free" scan is **cached site-wide** (short TTL), so adding the
-  block does not scan every course on every page load.
+### High-performance architecture (zero dashboard overhead)
+- **Single indexed SQL JOIN:** Scans open self-enrolment courses in a single indexed query instead of $N+1$ table operations.
+- **Site-wide MUC caching:** The candidate list and course image URLs are cached in MUC (`candidates`) with a short TTL, eliminating database and file-storage operations on subsequent Dashboard pageviews.
+- **In-memory category memoization:** Category name resolution and formatting are cached during render time.
+- **Conditional JS loading:** The `block_freecourses/search` AMD module is only registered if there is at least one course to display.
+- **CSS containment & GPU rendering:** Uses `contain: layout;`, `contain: layout style;`, and `content-visibility: auto;` to eliminate layout thrashing across the Dashboard.
 
 ### Installation
 1. Build the ZIP: `./scripts/package_workspace.sh`
 2. Install it via **Site administration → Plugins → Install plugins**, or unzip into
    `blocks/freecourses` and run the upgrade.
 
-### Quality
-CI runs `moodle-plugin-ci` (phpcs, phpdoc, mustache, grunt, PHPUnit, Behat) across PHP 8.2–8.4 and
-Moodle 5.0/5.1/5.2 on PostgreSQL and MariaDB.
+### Quality & Standards
+CI runs official `moodle-plugin-ci` (phplint, phpcs, phpdoc, mustache, grunt, PHPUnit, Behat) on every supported
+branch: Moodle 4.5, 5.0, 5.1, 5.2 and 5.3 (LTS), each at its lowest and highest supported PHP (8.1–8.4), on
+PostgreSQL and MariaDB, strictly following [moodledev.io](https://moodledev.io) specifications.
 
 ### Languages
 The plugin ships **English only**, per the plugins-directory policy. The Spanish translation is kept
@@ -56,8 +56,8 @@ approval.
 El bloque muestra, como tarjetas de curso en el Tablero, todos los cursos **visibles** que tienen una
 instancia de **autoinscripción habilitada** y totalmente abierta: sin clave de inscripción, sin clave
 de grupo, sin restricción por cohorte, sin fechas de inscripción, sin límite de aforo y con nuevas
-inscripciones permitidas. Se excluyen los cursos en los que el usuario ya está inscrito. Cada tarjeta
-enlaza a la página de inscripción del curso ("Inscribirse").
+inscripciones permitidas. Se excluyen los cursos en los que el usuario ya está inscrito. El botón
+**Inscribirse** de cada tarjeta inscribe en un solo clic y lleva directamente al curso.
 
 Las personas usuarias pueden buscar entre los cursos listados (sin distinguir mayúsculas ni acentos) y
 filtrarlos por categoría.

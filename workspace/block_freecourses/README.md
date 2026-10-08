@@ -5,12 +5,14 @@ filtering. Designed for the user **Dashboard**.
 
 - **Component:** `block_freecourses`
 - **Type:** Block
-- **Supported Moodle:** 5.0 – 5.2 (`$plugin->supported = [500, 502]`)
-- **Maturity:** Stable · **Release:** 1.0.0
+- **Supported Moodle:** 4.5, 5.0, 5.1, 5.2 (`$plugin->supported = [405, 502]`)
+- **Maturity:** Stable · **Release:** 1.1.0
 - **License:** GNU GPL v3 or later
 
-> Targets Moodle 5.0+ because the category dropdown uses Bootstrap 5 markup (Moodle 4.5 ships Bootstrap 4).
-> Apunta a Moodle 5.0+ porque el menú de categorías usa marcado de Bootstrap 5 (Moodle 4.5 incluye Bootstrap 4).
+> Bootstrap-dependent markup (screen-reader class, dropdown toggle, menu alignment) is chosen at
+> render time: Bootstrap 4 names on Moodle 4.5, Bootstrap 5 names on Moodle 5.0+.
+> El marcado que depende de Bootstrap se elige al renderizar: nombres de Bootstrap 4 en Moodle 4.5 y
+> de Bootstrap 5 en Moodle 5.0+.
 
 ---
 
@@ -31,11 +33,23 @@ only when **all** of these hold:
 | New enrolments allowed | `customint6` set |
 
 Courses the user is already enrolled in are excluded, and Moodle's own `can_self_enrol()` check is
-applied per user. Each card links to the course enrolment page.
+applied per user.
+
+Each card has an **Enrol** button that posts to `blocks/freecourses/enrol.php`. It enrols the user in
+one click through the self-enrolment plugin's own API and then takes them **straight into the
+course**. Everything is checked again against the database first. If the course is no longer freely
+open (for example, a key was added), the user is sent to Moodle's enrolment page instead, which
+explains why.
 
 ### How it is built
 - **Output:** `\block_freecourses\output\main` (renderable + templatable) →
   `templates/main.mustache`, rendered by `\block_freecourses\output\renderer`.
+- **Enrolment:** `\block_freecourses\local\enrolment` holds the "is this course free?" rules (shared
+  by the listing and by `enrol.php`) and the one-click enrolment. The core enrolment page is not used
+  directly for two reasons:
+  - on Moodle 4.5 it asks for a second click;
+  - after enrolling it returns to `$SESSION->wantsurl`, which OAuth2 logins leave pointing at the
+    Dashboard.
 - **JavaScript:** the search/filter behaviour is an AMD module, `amd/src/search.js`
   (built to `amd/build/`), wired from the block via `js_call_amd('block_freecourses/search', 'init')`.
   There is no inline JavaScript in the template.
@@ -70,11 +84,23 @@ inscripción (`password`), sin clave de grupo (`customint1`), sin restricción d
 (`customint3`) y con nuevas inscripciones permitidas (`customint6`).
 
 Se excluyen los cursos en los que la persona ya está inscrita y se aplica la comprobación
-`can_self_enrol()` de Moodle por usuario. Cada tarjeta enlaza a la página de inscripción del curso.
+`can_self_enrol()` de Moodle por usuario.
+
+Cada tarjeta tiene un botón **Inscribirse** que envía a `blocks/freecourses/enrol.php`. Ese script
+inscribe en un solo clic con la API del propio método de autoinscripción y **lleva directamente al
+curso**. Antes vuelve a comprobarlo todo contra la base de datos. Si el curso ya no está libremente
+abierto (por ejemplo, se le puso clave), envía a la página de inscripción de Moodle, que explica el
+motivo.
 
 ### Cómo está construido
 - **Salida:** `\block_freecourses\output\main` (renderable + templatable) →
   `templates/main.mustache`, renderizado por `\block_freecourses\output\renderer`.
+- **Inscripción:** `\block_freecourses\local\enrolment` contiene las reglas de "¿es gratis este
+  curso?" (compartidas por el listado y por `enrol.php`) y la inscripción en un clic. No se usa
+  directamente la página de inscripción de core por dos motivos:
+  - en Moodle 4.5 pide un segundo clic;
+  - después de inscribir vuelve a `$SESSION->wantsurl`, que el inicio de sesión OAuth2 deja apuntando
+    al Tablero.
 - **JavaScript:** la búsqueda/filtrado es un módulo AMD, `amd/src/search.js` (compilado a
   `amd/build/`), invocado desde el bloque con `js_call_amd('block_freecourses/search', 'init')`. No
   hay JavaScript en línea en la plantilla.
