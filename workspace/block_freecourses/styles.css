@@ -11,7 +11,6 @@
     border: 0;
     box-shadow: none;
     background: transparent;
-    contain: layout;
 }
 
 /*
@@ -100,13 +99,12 @@
     justify-content: start;
     justify-items: stretch;
     margin: 0;
-    padding: 0 0 0.25rem;
+    padding: 0 0 0.5rem;
     overflow-x: auto;
     overflow-y: hidden;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
     scroll-padding-inline-start: 0;
-    contain: layout style;
 }
 
 .block.block_freecourses .freecourses-carddeck > .col {
@@ -121,9 +119,6 @@
 /* Let each card fill its grid cell; the card's own small margin becomes the gutter. */
 .block.block_freecourses .freecourses-carddeck .course-card {
     flex: 1 1 auto;
-    contain: paint layout;
-    content-visibility: auto;
-    contain-intrinsic-size: 260px 220px;
 }
 
 .block.block_freecourses .freecourses-controls .freecourses-filter .dropdown-toggle,
