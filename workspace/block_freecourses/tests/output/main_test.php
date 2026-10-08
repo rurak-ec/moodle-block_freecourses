@@ -266,6 +266,7 @@ final class main_test extends \advanced_testcase {
             'Moodle 5.0' => ['500', $bs5],
             'Moodle 5.1' => ['501', $bs5],
             'Moodle 5.2' => ['502', $bs5],
+            'Moodle 5.3' => ['503', $bs5],
         ];
     }
 

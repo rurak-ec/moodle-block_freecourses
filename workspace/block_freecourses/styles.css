@@ -114,6 +114,10 @@
     scroll-snap-align: start;
 }
 
+.block.block_freecourses .freecourses-carddeck > .col.d-none {
+    display: none;
+}
+
 /* Let each card fill its grid cell; the card's own small margin becomes the gutter. */
 .block.block_freecourses .freecourses-carddeck .course-card {
     flex: 1 1 auto;
