@@ -28,5 +28,5 @@ $plugin->version   = 2026100801;          // The current plugin version (Date: Y
 $plugin->requires  = 2024100700;          // Requires Moodle 4.5 (2024100700) or later.
 $plugin->supported = [405, 503];          // Supported from Moodle 4.5 to 5.3.
 $plugin->component = 'block_freecourses'; // Full name of the plugin (used for diagnostics).
-$plugin->release   = '1.1.2';
+$plugin->release   = '1.1.3';
 $plugin->maturity  = MATURITY_STABLE;

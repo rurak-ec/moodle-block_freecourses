@@ -22,7 +22,8 @@ The block shows, as course cards on the Dashboard, every **visible** course that
 self-enrolment** instance which is fully open — no enrolment key, no group key, no cohort
 restriction, no enrolment dates, no capacity limit, and new enrolments allowed. Courses the user is
 already enrolled in are excluded. Each card's **Enrol** button enrols the user in one click and takes
-them straight into the course.
+them straight into the course. When nothing is left to offer, the block hides itself completely
+(title included); it stays visible only in editing mode.
 
 Users can search the listed courses (accent- and case-insensitive) and filter them by category.
 
@@ -57,7 +58,8 @@ El bloque muestra, como tarjetas de curso en el Tablero, todos los cursos **visi
 instancia de **autoinscripción habilitada** y totalmente abierta: sin clave de inscripción, sin clave
 de grupo, sin restricción por cohorte, sin fechas de inscripción, sin límite de aforo y con nuevas
 inscripciones permitidas. Se excluyen los cursos en los que el usuario ya está inscrito. El botón
-**Inscribirse** de cada tarjeta inscribe en un solo clic y lleva directamente al curso.
+**Inscribirse** de cada tarjeta inscribe en un solo clic y lleva directamente al curso. Cuando no
+queda nada que ofrecer, el bloque se oculta por completo (título incluido); solo se ve en modo edición.
 
 Las personas usuarias pueden buscar entre los cursos listados (sin distinguir mayúsculas ni acentos) y
 filtrarlos por categoría.

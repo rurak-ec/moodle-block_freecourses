@@ -27,7 +27,6 @@ $string['aria:categorydropdown'] = 'Filter courses by category';
 $string['enrolcourse'] = 'Enrol';
 $string['filterbycategory'] = 'Filter by category';
 $string['freecourses:myaddinstance'] = 'Add a new Free courses block to the Dashboard';
-$string['nofreecourses'] = 'There are no free courses available right now.';
 $string['nosearchresults'] = 'No courses match your search.';
 $string['pluginname'] = 'Free courses';
 $string['privacy:metadata'] = 'The Free courses block does not store any personal data.';

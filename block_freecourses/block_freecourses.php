@@ -50,10 +50,15 @@ class block_freecourses extends block_base {
         $this->content->text = $renderer->render($renderable);
         $this->content->footer = '';
 
-        // Deliver search/filter AMD module only if there are free courses to interact with.
-        if ($renderable->has_courses()) {
-            $this->page->requires->js_call_amd('block_freecourses/search', 'init', [$renderable->get_uniqid()]);
+        // With no free courses to offer, leave the block empty: block_base::is_empty() then hides it
+        // entirely (title included) outside editing mode.
+        if (!$renderable->has_courses()) {
+            $this->content->text = '';
+            return $this->content;
         }
+
+        // Deliver search/filter AMD module only if there are free courses to interact with.
+        $this->page->requires->js_call_amd('block_freecourses/search', 'init', [$renderable->get_uniqid()]);
 
         return $this->content;
     }

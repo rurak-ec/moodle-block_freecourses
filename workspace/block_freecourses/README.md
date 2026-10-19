@@ -5,8 +5,8 @@ filtering. Designed for the user **Dashboard**.
 
 - **Component:** `block_freecourses`
 - **Type:** Block
-- **Supported Moodle:** 4.5, 5.0, 5.1, 5.2 (`$plugin->supported = [405, 502]`)
-- **Maturity:** Stable · **Release:** 1.1.0
+- **Supported Moodle:** 4.5, 5.0, 5.1, 5.2, 5.3 (`$plugin->supported = [405, 503]`)
+- **Maturity:** Stable · **Release:** 1.1.3
 - **License:** GNU GPL v3 or later
 
 > Bootstrap-dependent markup (screen-reader class, dropdown toggle, menu alignment) is chosen at
@@ -33,7 +33,9 @@ only when **all** of these hold:
 | New enrolments allowed | `customint6` set |
 
 Courses the user is already enrolled in are excluded, and Moodle's own `can_self_enrol()` check is
-applied per user.
+applied per user. When there is nothing left to offer, the block renders no content at all, so Moodle
+hides it completely (title included). It stays visible only in editing mode, so it can still be moved
+or removed.
 
 Each card has an **Enrol** button that posts to `blocks/freecourses/enrol.php`. It enrols the user in
 one click through the self-enrolment plugin's own API and then takes them **straight into the
@@ -84,7 +86,9 @@ inscripción (`password`), sin clave de grupo (`customint1`), sin restricción d
 (`customint3`) y con nuevas inscripciones permitidas (`customint6`).
 
 Se excluyen los cursos en los que la persona ya está inscrita y se aplica la comprobación
-`can_self_enrol()` de Moodle por usuario.
+`can_self_enrol()` de Moodle por usuario. Cuando no queda nada que ofrecer, el bloque no genera
+contenido, así que Moodle lo oculta por completo (título incluido). Solo se ve en modo edición, para
+poder moverlo o quitarlo.
 
 Cada tarjeta tiene un botón **Inscribirse** que envía a `blocks/freecourses/enrol.php`. Ese script
 inscribe en un solo clic con la API del propio método de autoinscripción y **lleva directamente al

@@ -50,6 +50,17 @@ Feature: Free courses block on the Dashboard
     And I should see "You are enrolled in the course."
     And I should see "Alpha free course" in the "page-header" "region"
 
+  Scenario: The block is hidden when there are no free courses left to offer
+    Given the following "course enrolments" exist:
+      | user     | course | role    |
+      | student1 | ALPHA  | student |
+      | student1 | BETA   | student |
+    And I log in as "student1"
+    And I turn editing mode on
+    And I add the "Free courses" block
+    When I turn editing mode off
+    Then I should not see "Free courses"
+
   Scenario: The search box filters the listed courses
     Given I log in as "student1"
     And I turn editing mode on

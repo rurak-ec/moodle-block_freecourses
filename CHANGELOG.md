@@ -4,6 +4,19 @@ All notable changes to **block_freecourses** (Free courses) are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2026-10-19
+
+### Changed
+- The block now hides itself completely (title included) when there are no free courses to offer.
+  Previously it rendered its title and a "no free courses" message. The block renders no content in
+  that case, so Moodle's `is_empty()` check hides it outside editing mode; in editing mode it is still
+  shown so it can be moved or removed.
+- Removed the `nofreecourses` language string, which is no longer used.
+- Removed `contain` and `content-visibility` from the card styles: they could intercept clicks on the
+  cards. Cards hidden by the search box are now also hidden explicitly in the card deck
+  (`.col.d-none`).
+- Tests also cover Moodle 5.3 in the Bootstrap markup data provider.
+
 ## [1.1.2] - 2026-10-08
 
 ### Added
@@ -72,6 +85,7 @@ First public release prepared for the Moodle plugins directory.
   previously Spanish). The Spanish translation is kept under [`/translations`](translations/) and
   will be contributed to lang.moodle.org (AMOS) after approval, per the plugins-directory policy.
 
+[1.1.3]: https://github.com/rurak-ec/moodle-block_freecourses/releases/tag/v1.1.3
 [1.1.2]: https://github.com/rurak-ec/moodle-block_freecourses/releases/tag/v1.1.2
 [1.1.0]: https://github.com/rurak-ec/moodle-block_freecourses/releases/tag/v1.1.0
 [1.0.0]: https://github.com/rurak-ec/moodle-block_freecourses/releases/tag/v1.0.0
